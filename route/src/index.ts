@@ -10,6 +10,8 @@ const MONGO_URI: string = process.env.MONGO_URI as string;
 const app = express();
 const PORT_ROUTES: number = parseInt(process.env.PORT_ROUTES as string, 10);
 
+mongoose.set('strictQuery', false);
+
 interface Route extends Document {
   id: number;
   nodes: { lat: number; lon: number }[];

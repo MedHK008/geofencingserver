@@ -6,11 +6,12 @@
     "building",
     "route",
     "traffic_light",
-    "zone"
+    "zone",
+    "riscCalc"
   ],
   "scripts": {
     "build": "npm run build --workspaces",
-    "start": "concurrently \"npm start --workspace=building\" \"npm start --workspace=route\" \"npm start --workspace=traffic_light\" \"npm start --workspace=zone\""
+    "start": "concurrently \"npm start --workspace=building\" \"npm start --workspace=route\" \"npm start --workspace=traffic_light\" \"npm start --workspace=zone\" \"npm start --workspace=riscCalc\""
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
