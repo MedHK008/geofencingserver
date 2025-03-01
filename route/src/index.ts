@@ -10,44 +10,55 @@ const MONGO_URI: string = process.env.MONGO_URI as string;
 const app = express();
 const PORT_ROUTES: number = parseInt(process.env.PORT_ROUTES as string, 10);
 
-
 interface Route extends Document {
-    id: number;
-    nodes: number[];
-    tags: { highway: string };
-    name: string;
-    }
+  id: number;
+  nodes: { lat: number; lon: number }[];
+  tags: {
+    addr_street?: string;
+    highway: string;
+    lanes?: string;
+    name?: string;
+    oneway?: string;
+    source?: string;
+    surface?: string;
+  };
+  name: string;
+}
 
 const RouteSchema = new Schema<Route>({
-    id: { type: Number, required: true },
-    nodes: { type: [Number], required: true },
-    tags: { type: { highway: String }, required: true },
-    name: { type: String }
-    },{ collection: 'route' });
+  id: { type: Number, required: true },
+  nodes: [
+    {
+      lat: { type: Number, required: true },
+      lon: { type: Number, required: true },
+    },
+  ],
+  tags: {
+    addr_street: { type: String },
+    highway: { type: String, required: true },
+    lanes: { type: String },
+    name: { type: String },
+    oneway: { type: String },
+    source: { type: String },
+    surface: { type: String },
+  },
+  name: { type: String },
+}, { collection: 'route' });
 
 interface processedRoute {
-    id: number;
-    type: string;
-    name: string;
-    nodes: Node[];
-    }
+  id: number;
+  type: string;
+  name: string;
+  nodes: Node[];
+}
 
 interface Node {
-    id: number;
-    lat: number;
-    lon: number;
-    }
-
-const nodeSchema = new Schema<Node>({
-    id: { type: Number, required: true },
-    lat: { type: Number, required: true },
-    lon: { type: Number, required: true }
-    },{ collection: 'routes_nodes' });
+  lat: number;
+  lon: number;
+}
 
 // MongoDB client setup
 const routeModel = mongoose.model<Route>('route', RouteSchema);
-const nodeModel = mongoose.model<Node>('routes_nodes', nodeSchema);
-
 
 app.use(cors({ origin: '*' }));
 app.use(express.json());
@@ -55,46 +66,20 @@ app.set('view engine', 'ejs');
 
 mongoose.connect(MONGO_URI)
   .then(() => {
-    console.log('Connected to MongoDB');
-
     app.get('/api/routes', async (req: Request, res: Response) => {
-    
       try {
         const RoutesCursor = await routeModel.find({}).exec();
-        const NodesCursor = await nodeModel.find({}).exec();
-    
-        console.log('Number of routes:', RoutesCursor.length);
-        console.log('Number of nodes:', NodesCursor.length);
 
-        if (RoutesCursor.length > 0) console.log('First route nodes:', RoutesCursor[0].nodes);
-    
-        const nodeMap = new Map(
-          NodesCursor.map(node => {
-            const id = typeof node.id === 'object' && '$numberLong' in node.id
-              ? node.id.$numberLong
-              : String(node.id);
-            return [id, { lat: node.lat, lon: node.lon }];
-          })
-        );
-    
         const processedRoutes = RoutesCursor.map(route => {
           const { nodes, tags, name } = route;
-    
-          const normalizedNodes = nodes.map(node =>
-            typeof node === 'object' && node !== null && '$numberLong' in node ? (node as any).$numberLong : String(node)
-          );
-    
-          const enrichedNodes = normalizedNodes
-            .map(nodeId => nodeMap.get(nodeId))
-            .filter(coord => coord !== undefined);
-    
+
           return {
             type: tags.highway,
             name: name || '',
-            nodes: enrichedNodes
+            nodes: nodes,
           };
         });
-    
+
         res.status(200).json(processedRoutes);
       } catch (error) {
         console.error('Error fetching routes:', error);
