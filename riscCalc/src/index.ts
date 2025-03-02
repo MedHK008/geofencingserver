@@ -157,70 +157,120 @@ const zoneTypeSchema = new mongoose.Schema<ZoneTypeDocument>({
 },{ collection: 'zones_types' });
 
 const ZoneType = mongoose.model<ZoneTypeDocument>('zones_types', zoneTypeSchema);
+
+async function fixZoneGeometries() {
+    try {
+      const zones = await Zone.find().exec();
+      console.log(`Found ${zones.length} zones to check`);
+  
+      for (const zone of zones) {
+        // Check if geometry needs conversion
+        if (!zone.geometry?.type || typeof zone.geometry === 'object') {
+          if (Array.isArray(zone.geometry)) {
+            // Convert legacy array format to GeoJSON
+            const coordinates = zone.geometry.map(coord => [coord.lon, coord.lat]);
+            zone.geometry = {
+              type: 'Polygon',
+              coordinates: [coordinates] // Wrap in array for Polygon structure
+            };
+            await zone.save();
+            console.log(`Converted zone ${zone.id} geometry to Polygon`);
+          } else if (zone.geometry?.coordinates) {
+            // Ensure type field exists
+            zone.geometry.type = 'Polygon';
+            await zone.save();
+            console.log(`Added type to zone ${zone.id} geometry`);
+          }
+        }
+      }
+      console.log('Zone geometry validation completed');
+    } catch (error) {
+      console.error('Error fixing zone geometries:', error);
+    }
+  }
+  
+
+
 // Risk Calculation Function
 async function calculateZoneRisks() {
     try {
-        console.log('Starting risk calculation');
-        console.log('Connection state:', mongoose.connection.readyState);
-        if (mongoose.connection.readyState !== 1) {
-            throw new Error('MongoDB not connected');
-        }
-
-        const buildingTypes = await BuildingType.find().exec();
-        const buildingTypeMap = new Map(buildingTypes.map(bt => [bt.type, bt]));
-
-        const routeTypes = await RouteType.find().exec();
-        const routeTypeMap = new Map(routeTypes.map(rt => [rt.type, rt]));
-
-        const zoneTypes = await ZoneType.find().exec();
-        const zoneTypeMap = new Map(zoneTypes.map(zt => [zt.type, zt]));
-
-        const zones = await Zone.find().exec();
-        console.log(`Found ${zones.length} zones`);
-
-        for (const zone of zones) {
-            const zoneType = zoneTypeMap.get(zone.type);
-            let pedestrianRisk = zoneType?.pedestrian || 0;
-            let carRisk = zoneType?.car || 0;
-
-            const buildings = await Building.find({
-                location: { $geoWithin: { $geometry: zone.geometry } },
-            }).exec();
-            console.log(`Found ${buildings.length} buildings in zone ${zone.id}`);
-
-            for (const building of buildings) {
-                const buildingType = buildingTypeMap.get(building.type);
-                if (buildingType) {
-                    pedestrianRisk += buildingType.pedestrian;
-                    carRisk += buildingType.car;
+      console.log('Starting risk calculation');
+      if (mongoose.connection.readyState !== 1) {
+        throw new Error('MongoDB not connected');
+      }
+  
+      const buildingTypes = await BuildingType.find().exec();
+      const buildingTypeMap = new Map(buildingTypes.map(bt => [bt.type, bt]));
+  
+      const routeTypes = await RouteType.find().exec();
+      const routeTypeMap = new Map(routeTypes.map(rt => [rt.type, rt]));
+  
+      const zoneTypes = await ZoneType.find().exec();
+      const zoneTypeMap = new Map(zoneTypes.map(zt => [zt.type, zt]));
+  
+      const zones = await Zone.find().exec();
+      console.log(`Found ${zones.length} zones`);
+  
+      for (const zone of zones) {
+        const zoneType = zoneTypeMap.get(zone.type);
+        let pedestrianRisk = zoneType?.pedestrian || 0;
+        let carRisk = zoneType?.car || 0;
+  
+        // Building query with explicit type assertion
+        const buildings = await Building.find({
+            location: {
+            $geoWithin: {
+                $geometry: {
+                type: 'Polygon',
+                coordinates: zone.geometry.coordinates
                 }
             }
-
-            const routes = await Route.find({
-                'nodes.coordinates': { $geoWithin: { $geometry: zone.geometry } },
-            }).exec();
-            console.log(`Found ${routes.length} routes in zone ${zone.id}`);
-
-            for (const route of routes) {
-                const routeType = routeTypeMap.get(route.type);
-                if (routeType) {
-                    pedestrianRisk += routeType.pedestrian;
-                    carRisk += routeType.car;
+            }
+        }).exec();
+        console.log(`Found ${buildings.length} buildings in zone ${zone.id}`);
+  
+        for (const building of buildings) {
+          const buildingType = buildingTypeMap.get(building.type);
+          if (buildingType) {
+            pedestrianRisk += buildingType.pedestrian;
+            carRisk += buildingType.car;
+          }
+        }
+  
+        // Route query with corrected node structure
+        const routes = await Route.find({
+            'nodes.coordinates': {
+            $geoWithin: {
+                $geometry: {
+                type: 'Polygon',
+                coordinates: zone.geometry.coordinates
                 }
             }
-
-            await Zone.updateOne(
-                { _id: zone._id },
-                { $set: { pedestrian_risk: pedestrianRisk, car_risk: carRisk } }
-            );
+            }
+        }).exec();
+        console.log(`Found ${routes.length} routes in zone ${zone.id}`);
+  
+        for (const route of routes) {
+          const routeType = routeTypeMap.get(route.type);
+          if (routeType) {
+            pedestrianRisk += routeType.pedestrian;
+            carRisk += routeType.car;
+          }
         }
-
-        console.log('Risk calculation completed for all zones.');
+  
+        // Update the zone with calculated risks
+        await Zone.updateOne(
+          { _id: zone._id },
+          { $set: { pedestrian_risk: pedestrianRisk, car_risk: carRisk } }
+        );
+      }
+  
+      console.log('Risk calculation completed for all zones.');
     } catch (error) {
-        console.error('Error in calculateZoneRisks:', error);
-        throw error;
+      console.error('Error in calculateZoneRisks:', error);
+      throw error;
     }
-}
+  }
   
   // API Endpoint
   app.get('/api/zones/risks', async (req, res) => {
@@ -241,9 +291,10 @@ async function calculateZoneRisks() {
   // Single Connection and Server Startup
   mongoose.connect(MONGO_URI, {})
     .then(async () => {
-      console.log('MongoDB connected');
-      await calculateZoneRisks(); // Run risk calculation once on startup
-      app.listen(PORT_RISC, () => {
+        console.log('MongoDB connected');
+        await fixZoneGeometries(); // Run geometry fix once
+        await calculateZoneRisks(); // Run risk calculation once on startup
+        app.listen(PORT_RISC, () => {
         console.log(`API server running on http://localhost:${PORT_RISC}/api/zones/risks`);
       });
     })
