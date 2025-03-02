@@ -11,21 +11,26 @@
   ],
   "scripts": {
     "build": "npm run build --workspaces",
-    "start": "concurrently \"npm start --workspace=building\" \"npm start --workspace=route\" \"npm start --workspace=traffic_light\" \"npm start --workspace=zone\" \"npm start --workspace=riscCalc\""
+    "start": "concurrently \"npm run start:building\" \"npm run start:route\" \"npm run start:traffic_light\" \"npm run start:zone\"",
+    "start:building": "nodemon --exec ts-node ./building/index.ts",
+    "start:route": "nodemon --exec ts-node ./route/index.ts",
+    "start:traffic_light": "nodemon --exec ts-node ./traffic_light/index.ts",
+    "start:zone": "nodemon --exec ts-node ./zone/index.ts"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
-    "@types/node": "22.13.8",
+    "@types/node": "^22.13.8",
     "concurrently": "^9.1.2",
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2",
     "typescript": "^5.8.2"
   },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "16.4.7",
     "express": "5.0.1",
-    "mongoose": "8.11.0",
-    "nodemon": "^3.1.9"
+    "mongoose": "8.11.0"
   },
   "engines": {
     "node": ">=14.0.0"
