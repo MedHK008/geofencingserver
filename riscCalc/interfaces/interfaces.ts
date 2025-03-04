@@ -14,3 +14,15 @@ export interface Node {
     lat: number;
     lon: number;
 }
+
+export interface Building {
+    id: number;
+    type: string;
+    nodes: Node[];
+}
+
+export interface BuildingsTypes {
+    type: string;
+    pedestrian: number;
+    car: number;
+}
