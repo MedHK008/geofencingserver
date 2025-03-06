@@ -26,3 +26,15 @@ export interface BuildingsTypes {
     pedestrian: number;
     car: number;
 }
+
+export interface RoutesTypes {
+    type: string;
+    pedestrian: number;
+    car: number;
+}
+
+export interface ZonesTypes {
+    type: string;
+    pedestrian: number;
+    car: number;
+}

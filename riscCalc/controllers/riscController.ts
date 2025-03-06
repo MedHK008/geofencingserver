@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Building, BuildingType, Route, RouteType, Zone, ZoneType, TrafficLight } from "../modules/riscModule";
 import { TRAFFIC_RISC_CAR, TRAFFIC_RISC_PEDESTRIAN } from "../config/constants";
 import { ProcessedRoute, ProcessedZone, Node } from "../interfaces/interfaces";
+import { checkTimeForRoute, checkTimeForBuilding, checkAdhanTime, checkTimeForZone } from './TimeController';
 
 const routeFromProcessedRoutes = (routes: any[]): ProcessedRoute[] => {
     const processedRoutes = routes.map((route): ProcessedRoute => {
@@ -27,10 +28,12 @@ const zoneFromProcessedZones = (zones: any[]): ProcessedZone[] => {
 
 const joinBuildingAndTypes = async () => {
     try {
-      const buildings = await Building.find();
-      const buildingTypes = await BuildingType.find();
-  
-      const joinedData = buildings.map(building => {
+        const buildings = await Building.find();
+        let buildingTypes = await BuildingType.find();
+
+        buildingTypes = buildingTypes.map(buildingType => checkTimeForBuilding(buildingType));
+    
+        const joinedData = buildings.map(building => {
         const buildingType = buildingTypes.find(type => type.type === building.type);
         return {
           ...building.toObject(),
@@ -49,7 +52,9 @@ const joinBuildingAndTypes = async () => {
 const joinRouteAndTypes = async () => {
     try {
         const routes = routeFromProcessedRoutes(await Route.find());
-        const routeTypes = await RouteType.find();
+        let routeTypes = await RouteType.find();
+
+        routeTypes = routeTypes.map(routeType => checkTimeForRoute(routeType));
 
         const joinedData = routes.map(route => {
             const routeType = routeTypes.find(type => type.type === route.type);
@@ -68,8 +73,12 @@ const joinRouteAndTypes = async () => {
 
 const joinZoneAndTypes = async () => {
     try {
-        const zones = zoneFromProcessedZones(await Zone.find());
-        const zoneTypes = await ZoneType.find();
+        // const zones = zoneFromProcessedZones(await Zone.find());
+        const allZones = await Zone.find();
+        const zones = zoneFromProcessedZones(allZones.filter(zone => zone.id === 57901847));
+        let zoneTypes = await ZoneType.find();
+
+        zoneTypes = zoneTypes.map(zoneType => checkTimeForZone(zoneType));
 
         const joinedData = zones.map(zone => {
             const zoneType = zoneTypes.find(type => type.type === zone.type);
@@ -139,19 +148,25 @@ function isPointInZone(pointCoords: Node, zoneCoords: Node[]): boolean {
 
 export const ProcessedZonesWithRisc = async() => {
     let buildings = await joinBuildingAndTypes();
-    const processedRoutes = await joinRouteAndTypes();
-    const processedZones = await joinZoneAndTypes();
+    let processedRoutes = await joinRouteAndTypes();
+    let processedZones = await joinZoneAndTypes();
     let trafficLights = await joinTrafficLight();
 
     try {
         processedZones.forEach(zone => {
             console.log('Processing zone:', zone.id);
+            // console.log('after time check pedestrian:', zone.pedestrian);
+            // console.log('after time check car:', zone.car);
             buildings.forEach(building => {
                 if (isPointInZone({lat: building.lat, lon: building.lon}, zone.nodes)) {
+                    // console.log('Building of type', building.type, 'is in zone', zone.id);
+
+                    if (building.type === 'place_of_worship') {
+                        console.log('place of worship found');
+                    }
                     zone.pedestrian += building.pedestrian;
                     zone.car += building.car;
                     buildings = buildings.filter(b => b.id !== building.id);
-                    console.log('Building inside zone:', building.id);
                 }
             });
     
@@ -159,6 +174,7 @@ export const ProcessedZonesWithRisc = async() => {
                 let inside = false;
                 for (const node of route.nodes) {
                     if (isPointInZone(node, zone.nodes)) {
+                        // console.log('Route of type', route.type, 'is in zone', zone.id);
                         inside = true;
                         route.nodes = route.nodes.filter(n => n.lat !== node.lat && n.lon !== node.lon);
                         break;
@@ -168,15 +184,14 @@ export const ProcessedZonesWithRisc = async() => {
                     zone.pedestrian += route.pedestrian;
                     zone.car += route.car;
                 }
-                console.log('Route inside zone:', route.id);
             }
     
             trafficLights.forEach(trafficLight => {
                 if (isPointInZone({lat: trafficLight.lat, lon: trafficLight.lon}, zone.nodes)) {
+                    // console.log('Traffic light is in zone', zone.id);
                     zone.pedestrian += trafficLight.pedestrian;
                     zone.car += trafficLight.car;
                     trafficLights = trafficLights.filter(tl => tl.id !== trafficLight.id);
-                    console.log('Traffic light inside zone:', trafficLight.id);
                 }
             });
         });
