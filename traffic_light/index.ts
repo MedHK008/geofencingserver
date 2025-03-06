@@ -18,6 +18,6 @@ connectToDB()
 app.use('/api/trafficLights', trafficLightRoute);
 app.listen(PORT_TRAFFICS,
   () => {
-    console.log(`Server is Hosting from port ${PORT_TRAFFICS}`);
+    console.log(`API is running on port localhost:${PORT_TRAFFICS}/api/zones`);
   }
 )

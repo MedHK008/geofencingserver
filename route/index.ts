@@ -18,6 +18,6 @@ connectToDB()
 app.use('/api/routes', routeRouter);
 app.listen(PORT_ROUTES,
   () => {
-    console.log(`Server is Hosting from port ${PORT_ROUTES}`);
+    console.log(`API is running on port localhost:${PORT_ROUTES}/api/zones`);
   }
 )

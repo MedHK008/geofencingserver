@@ -12,6 +12,7 @@ interface Node {
     lat: number;
     lon: number;
 }
+
 const routeFromProcessesRoutes = (routes: any[]): ProcessedRoute[] => {
     const processedRoutes = routes.map((route): ProcessedRoute => {
         const { nodes, tags, name } = route;
@@ -26,14 +27,12 @@ const routeFromProcessesRoutes = (routes: any[]): ProcessedRoute[] => {
         };
     });
     return processedRoutes;
-}
+};
 
 const getRouteLight = async (req: Request, res: Response) => {
     try {
         const data = await routeModule.find({});
         const processedRoutes = routeFromProcessesRoutes(data);
-
-
         res.status(200).json({ success: true, processedRoutes });
     } catch (error) {
         console.error("Error fetching routes:", error); // Log the error for debugging
