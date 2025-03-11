@@ -19,6 +19,6 @@ connectToDB()
 app.use('/api/buildings', buildingRoute);
 app.listen(PORT_BUILDINGS,
   () => {
-    console.log(`API is running on port localhost:${PORT_BUILDINGS}/api/zones`);
+    console.log(`API is running on port localhost:${PORT_BUILDINGS}/api/buildings`);
   }
 )
