@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import { Node } from '../interfaces/interfaces';
 
 const app = express();
 app.use(cors({ origin: '*' }));
@@ -302,3 +303,8 @@ async function calculateZoneRisks() {
       console.error('MongoDB connection error:', err);
       process.exit(1); // Exit if connection fails
     });
+export interface ProcessedRoute {
+    id: number;
+    type: string;
+    nodes: Node[];
+}

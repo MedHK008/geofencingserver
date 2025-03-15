@@ -1,31 +1,33 @@
 import { Request, Response } from "express";
 import { Building, BuildingType, Route, RouteType, Zone, ZoneType, TrafficLight } from "../modules/riscModule";
 import { TRAFFIC_RISC_CAR, TRAFFIC_RISC_PEDESTRIAN } from "../config/constants";
-import { ProcessedRoute, ProcessedZone, Node } from "../interfaces/interfaces";
+import { ProcessedZone, Node } from "../interfaces/interfaces";
+import { ProcessedRoute } from "../src";
 import { checkTimeForRoute, checkTimeForBuilding, checkAdhanTime, checkTimeForZone } from './TimeController';
 import mongoose from "mongoose";
 
 const routeFromProcessedRoutes = (routes: any[]): ProcessedRoute[] => {
     const processedRoutes = routes.map((route): ProcessedRoute => {
         return {
-            _id: route._id,
-            id: route.id || 0, // Provide fallback for missing id
-            type: route.tags.highway, // Fallback for missing type
-            nodes: route.nodes, // Ensure valid nodes
+            id: route.id || 0,        // Valeur par défaut si id est manquant
+            type: route.tags.highway,  // 'unknown' si highway est manquant
+            nodes: route.nodes || []  // Tableau vide si nodes est manquant
         };
     });
     return processedRoutes;
 };
 
+
 const zoneFromProcessedZones = (zones: any[]): ProcessedZone[] => {
     const processedZones: ProcessedZone[] = zones.map((zone): ProcessedZone => {
         return {
             id: zone.id,
-            type: zone.tags.landuse || zone.tags.leisure || zone.tags.natural || 'unknown',
-            nodes: zone?.geometry || [],
-            Buildings:zone.buildings,
-            Routes:zone.routes,
-            TrafficLights:zone.trafficLights
+            geometry: zone.geometry || [],  // Remplace 'nodes' par 'geometry'
+            type: zone.tags.landuse || zone.tags.leisure || zone.tags.natural || 'unknown',  // Garder la logique pour déterminer 'type'
+            nodes: [],  // Ou une logique pour récupérer les nodes si nécessaire
+            routes: new Map(Object.entries(zone.routes || {})),  // Convertir routes en Map si ce n'est pas déjà fait
+            trafficLights: zone.trafficLights || 0,  // Convertir trafficLights en Map
+            buildings: new Map(Object.entries(zone.buildings || {}))  // Convertir buildings en Map
         };
     });
     return processedZones;
@@ -55,7 +57,9 @@ const joinBuildingAndTypes = async () => {
 
 const joinRouteAndTypes = async () => {
     try {
+        console.log("je suis dns joiture routes avant")
         const routes = routeFromProcessedRoutes(await Route.find());
+        console.log("je suis dns joiture des routes apres")
         let routeTypes = await RouteType.find();
 
         routeTypes = routeTypes.map(routeType => checkTimeForRoute(routeType));
@@ -64,7 +68,6 @@ const joinRouteAndTypes = async () => {
             const routeType = routeTypes.find(type => type.type === route.type);
             return {
                 ...route,
-                _id: route._id,
                 pedestrian: routeType?.pedestrian || 0,
                 car: routeType?.car || 0
             };
@@ -159,58 +162,68 @@ const organizeDb = async (req: Request, res: Response) => {
         let trafficLights = await TrafficLight.find();
 
         await Promise.all(zones.map(async (zone) => {
-            let buildingArray: number[] = [];
-            let routesArray: number[] = [];
-            let trafficLightsArray: number[] = [];
-        
-            // Filter Buildings
+            let buildingMap: Map<string, number> = new Map();
+            let routeMap: Map<string, number> = new Map();
+            let trafficLightnumber=0;
+
+            // Filter Buildings - Utiliser le type de bâtiment comme clé et compter les occurrences
             buildings = buildings.filter(building => {
                 if (isPointInZone({ lat: building.lat, lon: building.lon }, zone.geometry)) {
-                    buildingArray.push(building._id);
+                    // Utiliser 'building.type' comme clé
+                    const type = building.type || 'unknown';
+                    buildingMap.set(type, (buildingMap.get(type) || 0) + 1); // Incrémenter le compteur pour ce type
                     return false;
                 }
                 return true;
             });
-        
-            // Filter Routes
+
+            // Filter Routes - Utiliser le type de route comme clé et compter les occurrences
             routes = routes.map(route => {
                 const originalNodeCount = route.nodes.length;
                 route.nodes = route.nodes.filter((node: Node) => !isPointInZone(node, zone.geometry));
                 if (route.nodes.length < originalNodeCount) {
-                    routesArray.push(route._id);
+                    const type = route.tags.highway;
+                    routeMap.set(type, (routeMap.get(type) || 0) + 1); // Incrémenter le compteur pour ce type
                 }
                 return route;
             }).filter(route => route.nodes.length > 0);
-        
-            // Filter Traffic Lights
+
+            // Filter Traffic Lights - Utiliser le nom du feu de circulation comme clé et compter les occurrences
             trafficLights = trafficLights.filter(trafficLight => {
                 if (isPointInZone({ lat: trafficLight.lat, lon: trafficLight.lon }, zone.geometry)) {
-                    trafficLightsArray.push(trafficLight._id);
+                    trafficLightnumber++;
                     return false;
                 }
                 return true;
             });
-        
+
             // Vérifier si des valeurs existent avant la mise à jour
-            console.log(zone.id,buildingArray, routesArray, trafficLightsArray);
-            if (buildingArray.length > 0 || routesArray.length > 0 || trafficLightsArray.length > 0) {
+            console.log(zone.id, buildingMap, routeMap, trafficLightnumber);
+            if (buildingMap.size > 0 || routeMap.size > 0 || trafficLightnumber > 0) {
                 try {
                     const result = await Zone.updateOne(
                         { _id: zone._id },
-                        { $addToSet: { buildings: { $each: buildingArray }, routes: { $each: routesArray }, trafficLights: { $each: trafficLightsArray } } }
+                        {
+                            $set: {
+                                buildings: Object.fromEntries(buildingMap), // Convertir le Map en objet clé-valeur pour buildings
+                                routes: Object.fromEntries(routeMap), // Convertir le Map en objet clé-valeur pour routes
+                                trafficLights: trafficLightnumber // Mettre à jour le nombre de feux de circulation
+                            }
+                        }
+    
                     );
-                    
-                    console.log(`🔍 Documents modifiés: ${result.modifiedCount}`);                    
+
+                    console.log(`🔍 Documents modifiés: ${result.modifiedCount}`);
                     console.log(`✅ Mise à jour de la zone ${zone.id} réussie !`);
                 } catch (error) {
                     console.error(`❌ Erreur lors de la mise à jour de la zone ${zone.id}:`, error);
-                }                
+                }
             } else {
                 console.log(`⚠️ Aucun changement pour la zone ${zone.id}`);
             }
-            
+
         }));
-        res.status(200).json({ message: "OK" });        
+        res.status(200).json({ message: "OK" });
     } catch (error) {
         console.error("Error in organizeDb:", error);
         res.status(500).json({ message: "NO" });
@@ -218,16 +231,21 @@ const organizeDb = async (req: Request, res: Response) => {
 };
 
 const joinZoneAndComponents = async () => {
+    
     let buildings = await joinBuildingAndTypes();
-    let processedRoutes = await joinRouteAndTypes();
+    
+   // let processedRoutes = await joinRouteAndTypes();
+    console.log("je suis dns joiture des zones apres les routes")
     let processedZones = await joinZoneAndTypes();
+    console.log("je suis dns joiture des zones apres les zones")
     let trafficLights = await joinTrafficLight();
+    console.log("je suis dns joiture des zones apes les trafic")
     return processedZones.map(zone => {
         return {
             ...zone,
-            buildings: buildings.filter(building => zone.Buildings.includes(building._id)),
-            routes: processedRoutes.filter(route => zone.Routes.includes(route._id)),
-            trafficLights: trafficLights.filter(light => zone.TrafficLights.includes(light._id))
+            //buildings: buildings.filter(building => zone.Buildings.includes(building._id)),
+            //routes: processedRoutes.filter(route => zone.Routes.includes(route._id)),
+            //trafficLights: trafficLights.filter(light => zone.TrafficLights.includes(light._id))
         };
     });
 };
@@ -238,8 +256,9 @@ export const ProcessedZonesWithRisc = async () => {
     /*let buildings = await joinBuildingAndTypes();
     let processedRoutes = await joinRouteAndTypes();
     let processedZones = await joinZoneAndTypes();
-    let trafficLights = await joinTrafficLight();*/
+    let trafficLights = await joinTrafficLight();
     let Zones = await joinZoneAndComponents();
+    console.log("je suis dns joiture des zones apres le jointure")
     //console.log('before time check pedestrian:', processedZones[0].pedestrian);
 
     try {
@@ -257,11 +276,11 @@ export const ProcessedZonesWithRisc = async () => {
                 
             });
 
-            /*zone.routes.forEach(route => {
+            /* zone.routes.forEach(route => {
                 zone.pedestrian += route.pedestrian;
                 zone.car += route.car;
                // processedRoutes = processedRoutes.filter(r => r.id !== route.id);
-            });*/
+            });
 
             zone.trafficLights.forEach(light => {
                 zone.pedestrian += light.pedestrian;
@@ -276,11 +295,12 @@ export const ProcessedZonesWithRisc = async () => {
     } catch (error) {
         console.error('Error calculating RISC for zones:', error);
     }
-
+*/
 };
 
 const getZonesWithRisc = async (req: Request, res: Response) => {
-    try {
+   /* try {
+        console.log("je suis dans getZonesWithRisc");
         const processedZones = await ProcessedZonesWithRisc();
         if (!processedZones) {
             res.status(500).json({ success: false, message: 'Error processing zones' });
@@ -294,7 +314,7 @@ const getZonesWithRisc = async (req: Request, res: Response) => {
     } catch (error) {
         console.error('Error getting zones with RISC:', error);
         res.status(500).json({ success: false, message: 'Internal server error' });
-    }
+    }*/
 };
 
 export { getZonesWithRisc, organizeDb };

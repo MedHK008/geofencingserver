@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 
 export interface ProcessedRoute {
-    _id: mongoose.Schema.Types.ObjectId;
     id: number;
     type: string;
     nodes: Node[];
@@ -9,11 +8,12 @@ export interface ProcessedRoute {
 
 export interface ProcessedZone {
     id: number;
-    type: string;
-    nodes: Node[];
-    Buildings: mongoose.Schema.Types.ObjectId[];
-    Routes:mongoose.Schema.Types.ObjectId[];
-    TrafficLights: mongoose.Schema.Types.ObjectId[];
+    geometry: { lat: number; lon: number }[];  
+    type: string; 
+    nodes: Node[]; 
+    routes: Map<string, number>; 
+    trafficLights: number;  
+    buildings: Map<string, number>; 
 }
 
 export interface Node {

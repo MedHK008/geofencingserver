@@ -38,9 +38,17 @@ const ZoneSchema = new mongoose.Schema
       leisure: { type: String, required: false },
       natural: { type: String, required: false }
     },
-    buildings: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Building' }],
-    routes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Route' }],
-    trafficLights: [{ type: mongoose.Schema.Types.ObjectId, ref: 'TrafficLight' }]
+    routes: {
+        type: Map,
+        of: Number,
+        default: () => new Map()
+    },
+    trafficLights: { type: Number, required: true },
+    buildings: {
+        type: Map,
+        of: Number,
+        default: () => new Map()
+    }
 });
   
 const ZoneTypeSchema = new mongoose.Schema
