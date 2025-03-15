@@ -3,6 +3,7 @@ import env from 'dotenv';
 import cors from 'cors';
 import { connectToDB } from './config/db';
 import zonesWithRisc from './routers/riscRoute';
+import organizeDbRoute from './routers/organizeDbRoute';
 
 env.config();
 const PORT_RISC = process.env.PORT_RISC;
@@ -12,6 +13,7 @@ app.use(express.json());
 app.set('view engine', 'ejs');
 connectToDB();
 app.use('/api/buildingRisc', zonesWithRisc);
+app.use('/api/organizeDB', organizeDbRoute)
 app.listen(PORT_RISC, () => {
     console.log(`API is running on port localhost:${PORT_RISC}/api/buildingRisc`);
 });

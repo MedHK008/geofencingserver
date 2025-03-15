@@ -23,7 +23,10 @@ const zoneSchema = new mongoose.Schema(
             natural: { type: String },
             landuse: { type: String },
             leisure: { type: String },
-        }
+        },
+        buildings: [{ type: Number, required: true }],
+        routes: [{ type: Number, required: true }],
+        trafficLights: [{ type: Number, required: true }],
 
     }
 )

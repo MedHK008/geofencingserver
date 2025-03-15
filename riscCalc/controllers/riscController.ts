@@ -3,6 +3,7 @@ import { Building, BuildingType, Route, RouteType, Zone, ZoneType, TrafficLight 
 import { TRAFFIC_RISC_CAR, TRAFFIC_RISC_PEDESTRIAN } from "../config/constants";
 import { ProcessedRoute, ProcessedZone, Node } from "../interfaces/interfaces";
 import { checkTimeForRoute, checkTimeForBuilding, checkAdhanTime, checkTimeForZone } from './TimeController';
+import mongoose from "mongoose";
 
 const routeFromProcessedRoutes = (routes: any[]): ProcessedRoute[] => {
     const processedRoutes = routes.map((route): ProcessedRoute => {
@@ -32,20 +33,19 @@ const joinBuildingAndTypes = async () => {
         let buildingTypes = await BuildingType.find();
 
         buildingTypes = buildingTypes.map(buildingType => checkTimeForBuilding(buildingType));
-    
+
         const joinedData = buildings.map(building => {
-        const buildingType = buildingTypes.find(type => type.type === building.type);
-        return {
-          ...building.toObject(),
-          pedestrian: buildingType?.pedestrian || 0,
-          car: buildingType?.car || 0
-        };
-      });
-  
-      return joinedData;
+            const buildingType = buildingTypes.find(type => type.type === building.type);
+            return {
+                ...building.toObject(),
+                pedestrian: buildingType?.pedestrian || 0,
+                car: buildingType?.car || 0
+            };
+        });
+        return joinedData;
     } catch (error) {
-      console.error('Error joining building and types:', error);
-      throw error;
+        console.error('Error joining building and types:', error);
+        throw error;
     }
 };
 
@@ -75,7 +75,7 @@ const joinZoneAndTypes = async () => {
     try {
         // const zones = zoneFromProcessedZones(await Zone.find());
         const allZones = await Zone.find();
-        const zones = zoneFromProcessedZones(allZones.filter(zone => zone.id === 57901847));
+        const zones = zoneFromProcessedZones(allZones.filter(zone => zone.id === 57901847));//@ changer 
         let zoneTypes = await ZoneType.find();
 
         zoneTypes = zoneTypes.map(zoneType => checkTimeForZone(zoneType));
@@ -128,14 +128,15 @@ const joinTrafficLight = async () => {
  * @param zoneCoords - The coordinates of the polygon's vertices.
  * @returns True if the point is inside the polygon, false otherwise.
  */
+
 function isPointInZone(pointCoords: Node, zoneCoords: Node[]): boolean {
-    const {lat: y, lon: x } = pointCoords;
+    const { lat: y, lon: x } = pointCoords;
     let inside = false;
     const n = zoneCoords.length;
 
-    for(let i=0,j=n-1;i<n;j=i++){
-        const xi = zoneCoords[i].lon, yi=zoneCoords[i].lat;
-        const xj = zoneCoords[j].lon, yj=zoneCoords[j].lat;
+    for (let i = 0, j = n - 1; i < n; j = i++) {
+        const xi = zoneCoords[i].lon, yi = zoneCoords[i].lat;
+        const xj = zoneCoords[j].lon, yj = zoneCoords[j].lat;
         // ((yi > y) !== (yj > y)) to make sure that the point we are checking is between the two points of the edge
         // (x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) to make sure that the point is on the right side of the edge 
         const intersect = ((yi > y) !== (yj > y)) && (x < ((xj - xi) * (y - yi)) / (yj - yi) + xi);
@@ -145,8 +146,69 @@ function isPointInZone(pointCoords: Node, zoneCoords: Node[]): boolean {
     }
     return inside;
 }
+const organizeDb = async (req: Request, res: Response) => {
+    try {
+        let buildings = await Building.find();
+        let routes = await Route.find();
+        let zones = await Zone.find();
+        let trafficLights = await TrafficLight.find();
 
-export const ProcessedZonesWithRisc = async() => {
+        for (const zone of zones) {
+            let buildingArray: number[] = [];
+            let routesArray: number[] = [];
+            let trafficLightsArray: number[] = [];
+
+            // Filter Buildings
+            buildings = buildings.filter(building => {
+                if (isPointInZone({ lat: building.lat, lon: building.lon }, zone.geometry)) {
+                    buildingArray.push(building.id);
+                    return false; // Remove from array
+                }
+                return true; // Keep in array
+            });
+
+            // Filter Routes by removing only nodes inside the zone
+            routes = routes.map(route => {
+                // Store original node count
+                const originalNodeCount = route.nodes.length;
+
+                // Keep only nodes outside the zone
+                route.nodes = route.nodes.filter((node: Node) => !isPointInZone(node, zone.geometry));
+
+                // If at least one node was inside the zone, add the route ID
+                if (route.nodes.length < originalNodeCount) {
+                    routesArray.push(route.id);
+                }
+                return route;
+            }).filter(route => route.nodes.length > 0); // Remove empty routes
+
+            // Filter Traffic Lights
+            trafficLights = trafficLights.filter(trafficLight => {
+                if (isPointInZone({ lat: trafficLight.lat, lon: trafficLight.lon }, zone.geometry)) {
+                    trafficLightsArray.push(trafficLight.id);
+                    return false; // Remove from array
+                }
+                return true; // Keep in array
+            });
+
+            // Update Zone in one operation
+            await zone.updateOne(
+                { _id: new mongoose.Types.ObjectId(zone._id) }, // Convert to ObjectId
+                { $addToSet: { buildings: { $each: buildingArray }, routes: { $each: routesArray }, trafficLights: { $each: trafficLightsArray } } }
+            );
+
+            console.log(`Updated zone ${zone.id}:`, { buildingArray, routesArray, trafficLightsArray });
+        }
+
+        res.status(200).json({ message: "OK" });
+    } catch (error) {
+        console.error("Error in organizeDb:", error);
+        res.status(500).json({ message: "NO" });
+    }
+};
+
+
+export const ProcessedZonesWithRisc = async () => {
     let buildings = await joinBuildingAndTypes();
     let processedRoutes = await joinRouteAndTypes();
     let processedZones = await joinZoneAndTypes();
@@ -158,7 +220,7 @@ export const ProcessedZonesWithRisc = async() => {
             // console.log('after time check pedestrian:', zone.pedestrian);
             // console.log('after time check car:', zone.car);
             buildings.forEach(building => {
-                if (isPointInZone({lat: building.lat, lon: building.lon}, zone.nodes)) {
+                if (isPointInZone({ lat: building.lat, lon: building.lon }, zone.nodes)) {
                     // console.log('Building of type', building.type, 'is in zone', zone.id);
 
                     if (building.type === 'place_of_worship') {
@@ -169,7 +231,7 @@ export const ProcessedZonesWithRisc = async() => {
                     buildings = buildings.filter(b => b.id !== building.id);
                 }
             });
-    
+
             for (const route of processedRoutes) {
                 let inside = false;
                 for (const node of route.nodes) {
@@ -185,9 +247,9 @@ export const ProcessedZonesWithRisc = async() => {
                     zone.car += route.car;
                 }
             }
-    
+
             trafficLights.forEach(trafficLight => {
-                if (isPointInZone({lat: trafficLight.lat, lon: trafficLight.lon}, zone.nodes)) {
+                if (isPointInZone({ lat: trafficLight.lat, lon: trafficLight.lon }, zone.nodes)) {
                     // console.log('Traffic light is in zone', zone.id);
                     zone.pedestrian += trafficLight.pedestrian;
                     zone.car += trafficLight.car;
@@ -202,7 +264,7 @@ export const ProcessedZonesWithRisc = async() => {
 
 };
 
-const getZonesWithRisc = async(req: Request, res: Response) => {
+const getZonesWithRisc = async (req: Request, res: Response) => {
     try {
         const processedZones = await ProcessedZonesWithRisc();
         if (!processedZones) {
@@ -220,5 +282,5 @@ const getZonesWithRisc = async(req: Request, res: Response) => {
     }
 };
 
-export { getZonesWithRisc };
+export { getZonesWithRisc, organizeDb };
 
