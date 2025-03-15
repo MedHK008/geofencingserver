@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { Building, BuildingType, Route, RouteType, Zone, ZoneType, TrafficLight } from "../modules/riscModule";
 import { TRAFFIC_RISC_CAR, TRAFFIC_RISC_PEDESTRIAN } from "../config/constants";
-import { ProcessedZone, Node } from "../interfaces/interfaces";
+import { ProcessedZone, Node, BuildingsTypes, RoutesTypes } from "../interfaces/interfaces";
 import { ProcessedRoute } from "../src";
 import { checkTimeForRoute, checkTimeForBuilding, checkAdhanTime, checkTimeForZone } from './TimeController';
 import mongoose from "mongoose";
@@ -27,7 +27,8 @@ const zoneFromProcessedZones = (zones: any[]): ProcessedZone[] => {
             nodes: [],  // Ou une logique pour récupérer les nodes si nécessaire
             routes: new Map(Object.entries(zone.routes || {})),  // Convertir routes en Map si ce n'est pas déjà fait
             trafficLights: zone.trafficLights || 0,  // Convertir trafficLights en Map
-            buildings: new Map(Object.entries(zone.buildings || {}))  // Convertir buildings en Map
+            buildings: new Map(Object.entries(zone.buildings || {})),// Convertir buildings en Map
+
         };
     });
     return processedZones;
@@ -83,7 +84,7 @@ const joinZoneAndTypes = async () => {
     try {
         // const zones = zoneFromProcessedZones(await Zone.find());
         const allZones = await Zone.find();
-        const zones = zoneFromProcessedZones(allZones.filter(zone => zone.id === 57901847));//@ changer 
+        const zones = zoneFromProcessedZones(allZones);
         let zoneTypes = await ZoneType.find();
 
         zoneTypes = zoneTypes.map(zoneType => checkTimeForZone(zoneType));
@@ -164,7 +165,7 @@ const organizeDb = async (req: Request, res: Response) => {
         await Promise.all(zones.map(async (zone) => {
             let buildingMap: Map<string, number> = new Map();
             let routeMap: Map<string, number> = new Map();
-            let trafficLightnumber=0;
+            let trafficLightnumber = 0;
 
             // Filter Buildings - Utiliser le type de bâtiment comme clé et compter les occurrences
             buildings = buildings.filter(building => {
@@ -210,7 +211,7 @@ const organizeDb = async (req: Request, res: Response) => {
                                 trafficLights: trafficLightnumber // Mettre à jour le nombre de feux de circulation
                             }
                         }
-    
+
                     );
 
                     console.log(`🔍 Documents modifiés: ${result.modifiedCount}`);
@@ -231,10 +232,10 @@ const organizeDb = async (req: Request, res: Response) => {
 };
 
 const joinZoneAndComponents = async () => {
-    
+
     let buildings = await joinBuildingAndTypes();
-    
-   // let processedRoutes = await joinRouteAndTypes();
+
+    // let processedRoutes = await joinRouteAndTypes();
     console.log("je suis dns joiture des zones apres les routes")
     let processedZones = await joinZoneAndTypes();
     console.log("je suis dns joiture des zones apres les zones")
@@ -297,9 +298,9 @@ export const ProcessedZonesWithRisc = async () => {
     }
 */
 };
-
+/*
 const getZonesWithRisc = async (req: Request, res: Response) => {
-   /* try {
+    try {
         console.log("je suis dans getZonesWithRisc");
         const processedZones = await ProcessedZonesWithRisc();
         if (!processedZones) {
@@ -314,8 +315,66 @@ const getZonesWithRisc = async (req: Request, res: Response) => {
     } catch (error) {
         console.error('Error getting zones with RISC:', error);
         res.status(500).json({ success: false, message: 'Internal server error' });
-    }*/
+    }
+
 };
+*/
+const getRiskOfBuilding = (buildingTypes: BuildingsTypes[], type: string): { car: number, pedestrian: number } => {
+    const building = buildingTypes.find(buildingType => buildingType.type === type);
+    if (!building)
+        return { car: 0, pedestrian: 0 };
+
+    return { car: building.car, pedestrian: building.pedestrian };
+}
+const getRiskOfRoute = (routes: RoutesTypes[], type: string): { car: number, pedestrian: number } => {
+    const route = routes.find(route => route.type === type);
+    if (!route) {
+        return { car: 0, pedestrian: 0 };
+    }
+    return { car: route.car, pedestrian: route.pedestrian };
+}
+
+const getZonesWithRisc = async (req: Request, res: Response) => {
+    try {
+        let zones = await joinZoneAndTypes()
+        let buildingTypes = await BuildingType.find()
+        let routeTypes = await RouteType.find()
+        
+        zones.forEach(zone => {
+
+
+            const buildingsInZone = zone.buildings
+            const routesInZone = zone.routes
+            const trafficLightsInZone = zone.trafficLights
+            for (let [buildingType, number] of buildingsInZone.entries()) {
+                const risk = getRiskOfBuilding(buildingTypes, buildingType);
+                zone.car += number * risk.car
+                zone.pedestrian += number * risk.pedestrian
+            }
+            for (let [routeType, number] of routesInZone.entries()) {
+                const risk = getRiskOfRoute(routeTypes, routeType);
+
+                zone.car += number * risk.car
+                zone.pedestrian += number * risk.pedestrian
+            }
+            zone.car += trafficLightsInZone * TRAFFIC_RISC_CAR
+            zone.pedestrian += trafficLightsInZone * TRAFFIC_RISC_PEDESTRIAN
+              if (zone.car || zone.pedestrian)
+                  console.log("✅ zone id :", zone.id, "car : ", zone.car, "pedestrian :", zone.pedestrian)
+              else
+                  console.log("❌ Zone without Risk ")
+              
+
+        })
+
+
+
+        res.status(200).json({ success: true , zones });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+
+}
 
 export { getZonesWithRisc, organizeDb };
 

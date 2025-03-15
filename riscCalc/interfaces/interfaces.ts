@@ -8,12 +8,13 @@ export interface ProcessedRoute {
 
 export interface ProcessedZone {
     id: number;
-    geometry: { lat: number; lon: number }[];  
-    type: string; 
-    nodes: Node[]; 
-    routes: Map<string, number>; 
-    trafficLights: number;  
-    buildings: Map<string, number>; 
+    geometry: { lat: number; lon: number }[];
+    type: string;
+    nodes: Node[];
+    routes: Map<string, number>;
+    trafficLights: number;
+    buildings: Map<string, number>;
+
 }
 
 export interface Node {
