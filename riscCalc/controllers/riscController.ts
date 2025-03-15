@@ -8,6 +8,7 @@ import mongoose from "mongoose";
 const routeFromProcessedRoutes = (routes: any[]): ProcessedRoute[] => {
     const processedRoutes = routes.map((route): ProcessedRoute => {
         return {
+            _id: route._id,
             id: route.id || 0, // Provide fallback for missing id
             type: route.tags.highway, // Fallback for missing type
             nodes: route.nodes, // Ensure valid nodes
@@ -21,7 +22,10 @@ const zoneFromProcessedZones = (zones: any[]): ProcessedZone[] => {
         return {
             id: zone.id,
             type: zone.tags.landuse || zone.tags.leisure || zone.tags.natural || 'unknown',
-            nodes: zone?.geometry // Include geometry in the response
+            nodes: zone?.geometry || [],
+            Buildings:zone.buildings,
+            Routes:zone.routes,
+            TrafficLights:zone.trafficLights
         };
     });
     return processedZones;
@@ -60,6 +64,7 @@ const joinRouteAndTypes = async () => {
             const routeType = routeTypes.find(type => type.type === route.type);
             return {
                 ...route,
+                _id: route._id,
                 pedestrian: routeType?.pedestrian || 0,
                 car: routeType?.car || 0
             };
@@ -153,111 +158,121 @@ const organizeDb = async (req: Request, res: Response) => {
         let zones = await Zone.find();
         let trafficLights = await TrafficLight.find();
 
-        for (const zone of zones) {
+        await Promise.all(zones.map(async (zone) => {
             let buildingArray: number[] = [];
             let routesArray: number[] = [];
             let trafficLightsArray: number[] = [];
-
+        
             // Filter Buildings
             buildings = buildings.filter(building => {
                 if (isPointInZone({ lat: building.lat, lon: building.lon }, zone.geometry)) {
-                    buildingArray.push(building.id);
-                    return false; // Remove from array
+                    buildingArray.push(building._id);
+                    return false;
                 }
-                return true; // Keep in array
+                return true;
             });
-
-            // Filter Routes by removing only nodes inside the zone
+        
+            // Filter Routes
             routes = routes.map(route => {
-                // Store original node count
                 const originalNodeCount = route.nodes.length;
-
-                // Keep only nodes outside the zone
                 route.nodes = route.nodes.filter((node: Node) => !isPointInZone(node, zone.geometry));
-
-                // If at least one node was inside the zone, add the route ID
                 if (route.nodes.length < originalNodeCount) {
-                    routesArray.push(route.id);
+                    routesArray.push(route._id);
                 }
                 return route;
-            }).filter(route => route.nodes.length > 0); // Remove empty routes
-
+            }).filter(route => route.nodes.length > 0);
+        
             // Filter Traffic Lights
             trafficLights = trafficLights.filter(trafficLight => {
                 if (isPointInZone({ lat: trafficLight.lat, lon: trafficLight.lon }, zone.geometry)) {
-                    trafficLightsArray.push(trafficLight.id);
-                    return false; // Remove from array
+                    trafficLightsArray.push(trafficLight._id);
+                    return false;
                 }
-                return true; // Keep in array
+                return true;
             });
-
-            // Update Zone in one operation
-            await zone.updateOne(
-                { _id: new mongoose.Types.ObjectId(zone._id) }, // Convert to ObjectId
-                { $addToSet: { buildings: { $each: buildingArray }, routes: { $each: routesArray }, trafficLights: { $each: trafficLightsArray } } }
-            );
-
-            console.log(`Updated zone ${zone.id}:`, { buildingArray, routesArray, trafficLightsArray });
-        }
-
-        res.status(200).json({ message: "OK" });
+        
+            // Vérifier si des valeurs existent avant la mise à jour
+            console.log(zone.id,buildingArray, routesArray, trafficLightsArray);
+            if (buildingArray.length > 0 || routesArray.length > 0 || trafficLightsArray.length > 0) {
+                try {
+                    const result = await Zone.updateOne(
+                        { _id: zone._id },
+                        { $addToSet: { buildings: { $each: buildingArray }, routes: { $each: routesArray }, trafficLights: { $each: trafficLightsArray } } }
+                    );
+                    
+                    console.log(`🔍 Documents modifiés: ${result.modifiedCount}`);                    
+                    console.log(`✅ Mise à jour de la zone ${zone.id} réussie !`);
+                } catch (error) {
+                    console.error(`❌ Erreur lors de la mise à jour de la zone ${zone.id}:`, error);
+                }                
+            } else {
+                console.log(`⚠️ Aucun changement pour la zone ${zone.id}`);
+            }
+            
+        }));
+        res.status(200).json({ message: "OK" });        
     } catch (error) {
         console.error("Error in organizeDb:", error);
         res.status(500).json({ message: "NO" });
     }
 };
 
-
-export const ProcessedZonesWithRisc = async () => {
+const joinZoneAndComponents = async () => {
     let buildings = await joinBuildingAndTypes();
     let processedRoutes = await joinRouteAndTypes();
     let processedZones = await joinZoneAndTypes();
     let trafficLights = await joinTrafficLight();
+    return processedZones.map(zone => {
+        return {
+            ...zone,
+            buildings: buildings.filter(building => zone.Buildings.includes(building._id)),
+            routes: processedRoutes.filter(route => zone.Routes.includes(route._id)),
+            trafficLights: trafficLights.filter(light => zone.TrafficLights.includes(light._id))
+        };
+    });
+};
+
+
+
+export const ProcessedZonesWithRisc = async () => {
+    /*let buildings = await joinBuildingAndTypes();
+    let processedRoutes = await joinRouteAndTypes();
+    let processedZones = await joinZoneAndTypes();
+    let trafficLights = await joinTrafficLight();*/
+    let Zones = await joinZoneAndComponents();
+    //console.log('before time check pedestrian:', processedZones[0].pedestrian);
 
     try {
-        processedZones.forEach(zone => {
+        Zones.forEach(zone => {
             console.log('Processing zone:', zone.id);
             // console.log('after time check pedestrian:', zone.pedestrian);
             // console.log('after time check car:', zone.car);
-            buildings.forEach(building => {
-                if (isPointInZone({ lat: building.lat, lon: building.lon }, zone.nodes)) {
-                    // console.log('Building of type', building.type, 'is in zone', zone.id);
-
+            zone.buildings.forEach(building => {   
                     if (building.type === 'place_of_worship') {
                         console.log('place of worship found');
                     }
                     zone.pedestrian += building.pedestrian;
                     zone.car += building.car;
-                    buildings = buildings.filter(b => b.id !== building.id);
-                }
+                    //buildings = buildings.filter(b => b.id !== building.id);
+                
             });
 
-            for (const route of processedRoutes) {
-                let inside = false;
-                for (const node of route.nodes) {
-                    if (isPointInZone(node, zone.nodes)) {
-                        // console.log('Route of type', route.type, 'is in zone', zone.id);
-                        inside = true;
-                        route.nodes = route.nodes.filter(n => n.lat !== node.lat && n.lon !== node.lon);
-                        break;
-                    }
-                }
-                if (inside) {
-                    zone.pedestrian += route.pedestrian;
-                    zone.car += route.car;
-                }
-            }
+            /*zone.routes.forEach(route => {
+                zone.pedestrian += route.pedestrian;
+                zone.car += route.car;
+               // processedRoutes = processedRoutes.filter(r => r.id !== route.id);
+            });*/
 
-            trafficLights.forEach(trafficLight => {
-                if (isPointInZone({ lat: trafficLight.lat, lon: trafficLight.lon }, zone.nodes)) {
-                    // console.log('Traffic light is in zone', zone.id);
-                    zone.pedestrian += trafficLight.pedestrian;
-                    zone.car += trafficLight.car;
-                    trafficLights = trafficLights.filter(tl => tl.id !== trafficLight.id);
-                }
+            zone.trafficLights.forEach(light => {
+                zone.pedestrian += light.pedestrian;
+                zone.car += light.car;
+               // trafficLights = trafficLights.filter(tl => tl.id !== light.id);
             });
+            console.log('after time check pedestrian:', zone.pedestrian);
+            console.log('after time check car:', zone.car);
+
         });
-        return processedZones;
+        return Zones;
     } catch (error) {
         console.error('Error calculating RISC for zones:', error);
     }

@@ -38,13 +38,18 @@ const ZoneSchema = new mongoose.Schema
       leisure: { type: String, required: false },
       natural: { type: String, required: false }
     },
+    buildings: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Building' }],
+    routes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Route' }],
+    trafficLights: [{ type: mongoose.Schema.Types.ObjectId, ref: 'TrafficLight' }]
 });
   
 const ZoneTypeSchema = new mongoose.Schema
 ({
     type: { type: String, required: true },
     pedestrian: { type: Number, required: true },
-    car: { type: Number, required: true }
+    car: { type: Number, required: true },
+    
+      
 });
 
 

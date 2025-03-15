@@ -17,3 +17,5 @@ app.use('/api/organizeDB', organizeDbRoute)
 app.listen(PORT_RISC, () => {
     console.log(`API is running on port localhost:${PORT_RISC}/api/buildingRisc`);
 });
+
+
