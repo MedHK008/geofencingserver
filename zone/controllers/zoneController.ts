@@ -1,17 +1,16 @@
 import { zoneModule } from "../modules/zoneModule"
 import { Request, Response } from "express";
 interface ProcessedZone {
-    id: string;
+    zoneId: string;
     type: string;
-
     geometry?: Array<{ lat: number; lon: number }>; // Add geometry to response
 }
 const zoneToProcessedZone = (zones: any[]): ProcessedZone[] => {
     const processedZones: ProcessedZone[] = zones.map((zone): ProcessedZone => {
         return {
-            id: zone.id,
-            type: zone.tags.landuse || zone.tags.leisure || zone.tags.natural || 'unknown',
-            geometry: zone.geometry // Include geometry in the response
+            zoneId: zone.zoneId,
+            type: zone.tags.landuse,
+            geometry: zone.geometry
         };
     });
     return processedZones;

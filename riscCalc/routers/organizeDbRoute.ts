@@ -1,6 +1,7 @@
-import express from 'express'
-import { organizeDb } from '../controllers/riscController'
-const organizeDbRoute = express.Router()
-organizeDbRoute.get('/organizeDb', organizeDb)
+import express from 'express';
+import { organizeDb } from '../controllers/riscController';
 
-export default organizeDbRoute
+const organizeDbRoute = express.Router();
+organizeDbRoute.get('/organizeDb', organizeDb);
+
+export default organizeDbRoute;
