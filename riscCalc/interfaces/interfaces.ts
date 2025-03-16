@@ -7,10 +7,9 @@ export interface ProcessedRoute {
 }
 
 export interface ProcessedZone {
-    id: number;
+    zoneId: string;
     geometry: { lat: number; lon: number }[];
     type: string;
-    nodes: Node[];
     routes: Map<string, number>;
     trafficLights: number;
     buildings: Map<string, number>;

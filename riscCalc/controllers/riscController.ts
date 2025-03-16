@@ -21,13 +21,12 @@ const routeFromProcessedRoutes = (routes: any[]): ProcessedRoute[] => {
 const zoneFromProcessedZones = (zones: any[]): ProcessedZone[] => {
     const processedZones: ProcessedZone[] = zones.map((zone): ProcessedZone => {
         return {
-            id: zone.id,
-            geometry: zone.geometry || [],  // Remplace 'nodes' par 'geometry'
-            type: zone.tags.landuse || zone.tags.leisure || zone.tags.natural || 'unknown',  // Garder la logique pour déterminer 'type'
-            nodes: [],  // Ou une logique pour récupérer les nodes si nécessaire
-            routes: new Map(Object.entries(zone.routes || {})),  // Convertir routes en Map si ce n'est pas déjà fait
-            trafficLights: zone.trafficLights || 0,  // Convertir trafficLights en Map
-            buildings: new Map(Object.entries(zone.buildings || {})),// Convertir buildings en Map
+            zoneId: zone.id,
+            geometry: zone.geometry || [],
+            type: zone.tags.landuse || zone.tags.leisure || zone.tags.natural || 'unknown',
+            routes: new Map(Object.entries(zone.routes || {})),
+            trafficLights: zone.trafficLights || 0,
+            buildings: new Map(Object.entries(zone.buildings || {})),
 
         };
     });
@@ -82,7 +81,7 @@ const joinRouteAndTypes = async () => {
 
 const joinZoneAndTypes = async () => {
     try {
-        // const zones = zoneFromProcessedZones(await Zone.find());
+
         const allZones = await Zone.find();
         const zones = zoneFromProcessedZones(allZones);
         let zoneTypes = await ZoneType.find();
@@ -146,15 +145,34 @@ function isPointInZone(pointCoords: Node, zoneCoords: Node[]): boolean {
     for (let i = 0, j = n - 1; i < n; j = i++) {
         const xi = zoneCoords[i].lon, yi = zoneCoords[i].lat;
         const xj = zoneCoords[j].lon, yj = zoneCoords[j].lat;
-        // ((yi > y) !== (yj > y)) to make sure that the point we are checking is between the two points of the edge
-        // (x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) to make sure that the point is on the right side of the edge 
-        const intersect = ((yi > y) !== (yj > y)) && (x < ((xj - xi) * (y - yi)) / (yj - yi) + xi);
-        if (intersect) {
-            inside = !inside;
+        // Avoid division by zero
+        if (yj === yi) continue;
+
+        // Check if the point is exactly on a polygon edge
+        if ((y === yi && x === xi) || (y === yj && x === xj)) {
+            console.log("Point is on the boundary");
+            return true; // Consider the point inside if it is on the boundary
         }
+
+        // Ray-casting algorithm
+        const intersect = ((yi > y) !== (yj > y)) &&
+            (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
     }
+
     return inside;
 }
+const formatGeometry = (geometry: any[]): { lat: number, lon: number }[] => {
+    return geometry.map(coord => {
+        const newCoord = coord.toObject();
+        return {
+            lat: newCoord['1'],
+            lon: newCoord['0']
+        };
+    });
+};
+
+
 const organizeDb = async (req: Request, res: Response) => {
     try {
         let buildings = await Building.find();
@@ -162,14 +180,17 @@ const organizeDb = async (req: Request, res: Response) => {
         let zones = await Zone.find();
         let trafficLights = await TrafficLight.find();
 
+
         await Promise.all(zones.map(async (zone) => {
             let buildingMap: Map<string, number> = new Map();
             let routeMap: Map<string, number> = new Map();
             let trafficLightnumber = 0;
+            const standardNode = formatGeometry(zone.geometry);
+
 
             // Filter Buildings - Utiliser le type de bâtiment comme clé et compter les occurrences
             buildings = buildings.filter(building => {
-                if (isPointInZone({ lat: building.lat, lon: building.lon }, zone.geometry)) {
+                if (isPointInZone({ lat: building.lat, lon: building.lon }, standardNode)) {
                     // Utiliser 'building.type' comme clé
                     const type = building.type || 'unknown';
                     buildingMap.set(type, (buildingMap.get(type) || 0) + 1); // Incrémenter le compteur pour ce type
@@ -181,7 +202,10 @@ const organizeDb = async (req: Request, res: Response) => {
             // Filter Routes - Utiliser le type de route comme clé et compter les occurrences
             routes = routes.map(route => {
                 const originalNodeCount = route.nodes.length;
-                route.nodes = route.nodes.filter((node: Node) => !isPointInZone(node, zone.geometry));
+                route.nodes = route.nodes.filter((node: Node) => !isPointInZone(node, standardNode));
+
+
+
                 if (route.nodes.length < originalNodeCount) {
                     const type = route.tags.highway;
                     routeMap.set(type, (routeMap.get(type) || 0) + 1); // Incrémenter le compteur pour ce type
@@ -191,7 +215,9 @@ const organizeDb = async (req: Request, res: Response) => {
 
             // Filter Traffic Lights - Utiliser le nom du feu de circulation comme clé et compter les occurrences
             trafficLights = trafficLights.filter(trafficLight => {
-                if (isPointInZone({ lat: trafficLight.lat, lon: trafficLight.lon }, zone.geometry)) {
+                if (isPointInZone({ lat: trafficLight.lat, lon: trafficLight.lon }, standardNode)) {
+                    console.log(trafficLightnumber)
+
                     trafficLightnumber++;
                     return false;
                 }
@@ -199,7 +225,7 @@ const organizeDb = async (req: Request, res: Response) => {
             });
 
             // Vérifier si des valeurs existent avant la mise à jour
-            console.log(zone.id, buildingMap, routeMap, trafficLightnumber);
+            console.log(zone._id, buildingMap, routeMap, trafficLightnumber);
             if (buildingMap.size > 0 || routeMap.size > 0 || trafficLightnumber > 0) {
                 try {
                     const result = await Zone.updateOne(
@@ -215,12 +241,12 @@ const organizeDb = async (req: Request, res: Response) => {
                     );
 
                     console.log(`🔍 Documents modifiés: ${result.modifiedCount}`);
-                    console.log(`✅ Mise à jour de la zone ${zone.id} réussie !`);
+                    console.log(`✅ Mise à jour de la zone ${zone.zoneId} réussie !`);
                 } catch (error) {
-                    console.error(`❌ Erreur lors de la mise à jour de la zone ${zone.id}:`, error);
+                    console.error(`❌ Erreur lors de la mise à jour de la zone ${zone.zoneId}:`, error);
                 }
             } else {
-                console.log(`⚠️ Aucun changement pour la zone ${zone.id}`);
+                console.log(`⚠️ Aucun changement pour la zone ${zone.zoneId}`);
             }
 
         }));
@@ -335,11 +361,12 @@ const getRiskOfRoute = (routes: RoutesTypes[], type: string): { car: number, ped
 }
 
 const getZonesWithRisc = async (req: Request, res: Response) => {
+    const start = Date.now();
     try {
         let zones = await joinZoneAndTypes()
         let buildingTypes = await BuildingType.find()
         let routeTypes = await RouteType.find()
-        
+
         zones.forEach(zone => {
 
 
@@ -359,22 +386,51 @@ const getZonesWithRisc = async (req: Request, res: Response) => {
             }
             zone.car += trafficLightsInZone * TRAFFIC_RISC_CAR
             zone.pedestrian += trafficLightsInZone * TRAFFIC_RISC_PEDESTRIAN
-              if (zone.car || zone.pedestrian)
-                  console.log("✅ zone id :", zone.id, "car : ", zone.car, "pedestrian :", zone.pedestrian)
-              else
-                  console.log("❌ Zone without Risk ")
-              
+
+
+
+        })
+        const minCar: number = zones.reduce((min, current) => {
+            return current.car < min ? current.car : min;
+        }, 0);
+
+        const maxCar: number = zones.reduce((max, current) => {
+            return current.car > max ? current.car : max;
+        }, 0);
+
+        const minPed: number = zones.reduce((min, current) => {
+            return current.pedestrian < min ? current.pedestrian : min;
+        }, 0);
+
+        const maxPed: number = zones.reduce((max, current) => {
+            return current.pedestrian > max ? current.pedestrian : max;
+        }, 0);
+
+        const ecartCar: number = maxCar - minCar;
+        const ecartPed: number = maxPed - minPed;
+
+        zones.forEach(zone => {
+            zone.car = (zone.car - minCar) / ecartCar;
+            zone.pedestrian = (zone.pedestrian - minPed) / ecartPed;
+            if (zone.car || zone.pedestrian)
+                console.log("✅ zone id :", zone.zoneId, "car : ", zone.car, "pedestrian :", zone.pedestrian)
+            else
+                console.log("❌ Zone without Risk ")
 
         })
 
 
 
-        res.status(200).json({ success: true , zones });
+        const end = Date.now() - start;
+        console.log(`Execution time: ${end}ms`);
+
+        res.status(200).json({ success: true, zones, end });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
 
 }
+    
 
 export { getZonesWithRisc, organizeDb };
 
