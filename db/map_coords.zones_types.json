@@ -1,69 +1,5 @@
 [{
   "_id": {
-    "$oid": "67c36527c026f9d6a298d245"
-  },
-  "type": "beach",
-  "pedestrian": 0,
-  "car": 100
-},
-{
-  "_id": {
-    "$oid": "67c36527c026f9d6a298d246"
-  },
-  "type": "coastline",
-  "pedestrian": 0,
-  "car": 100
-},
-{
-  "_id": {
-    "$oid": "67c36527c026f9d6a298d247"
-  },
-  "type": "grassland",
-  "pedestrian": 90,
-  "car": 100
-},
-{
-  "_id": {
-    "$oid": "67c36527c026f9d6a298d248"
-  },
-  "type": "water",
-  "pedestrian": 100,
-  "car": 100
-},
-{
-  "_id": {
-    "$oid": "67c36527c026f9d6a298d249"
-  },
-  "type": "wood",
-  "pedestrian": 95,
-  "car": 95
-},
-{
-  "_id": {
-    "$oid": "67c36527c026f9d6a298d24a"
-  },
-  "type": "basin",
-  "pedestrian": 95,
-  "car": 95
-},
-{
-  "_id": {
-    "$oid": "67c36527c026f9d6a298d24b"
-  },
-  "type": "cemetery",
-  "pedestrian": 100,
-  "car": 100
-},
-{
-  "_id": {
-    "$oid": "67c36527c026f9d6a298d24c"
-  },
-  "type": "construction",
-  "pedestrian": 90,
-  "car": 90
-},
-{
-  "_id": {
     "$oid": "67c36527c026f9d6a298d24d"
   },
   "type": "farmland",
@@ -74,17 +10,9 @@
   "_id": {
     "$oid": "67c36527c026f9d6a298d24e"
   },
-  "type": "forest",
+  "type": "natural",
   "pedestrian": 95,
   "car": 75
-},
-{
-  "_id": {
-    "$oid": "67c36527c026f9d6a298d24f"
-  },
-  "type": "grass",
-  "pedestrian": 40,
-  "car": 60
 },
 {
   "_id": {
@@ -96,14 +24,6 @@
 },
 {
   "_id": {
-    "$oid": "67c36527c026f9d6a298d251"
-  },
-  "type": "railway",
-  "pedestrian": 100,
-  "car": 100
-},
-{
-  "_id": {
     "$oid": "67c36527c026f9d6a298d252"
   },
   "type": "residential",
@@ -112,33 +32,9 @@
 },
 {
   "_id": {
-    "$oid": "67c36527c026f9d6a298d253"
-  },
-  "type": "golf_course",
-  "pedestrian": 100,
-  "car": 100
-},
-{
-  "_id": {
     "$oid": "67c36527c026f9d6a298d254"
   },
-  "type": "park",
+  "type": "commercial",
   "pedestrian": 10,
   "car": 40
-},
-{
-  "_id": {
-    "$oid": "67c36527c026f9d6a298d255"
-  },
-  "type": "pitch",
-  "pedestrian": 100,
-  "car": 100
-},
-{
-  "_id": {
-    "$oid": "67c36527c026f9d6a298d256"
-  },
-  "type": "sports_centre",
-  "pedestrian": 45,
-  "car": 100
 }]
