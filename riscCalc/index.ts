@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
 import env from 'dotenv';
 import cors from 'cors';
 import { connectToDB } from './config/db';
@@ -17,7 +17,9 @@ connectToDB();
 app.use('/api/buildingRisc', zonesWithRisc);
 app.use('/api/organizeDB', organizeDbRoute);
 app.listen(PORT_RISC, () => {
-    console.log(`API is running on port localhost:${PORT_RISC}/api/buildingRisc`);
+    console.log(`Server is running on port ${PORT_RISC}`);
+    console.log(`http://localhost:${PORT_RISC}/api/buildingRisc`);
+    console.log(`http://localhost:${PORT_RISC}/api/organizeDB`);
 });
 
 

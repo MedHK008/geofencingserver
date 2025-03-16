@@ -31,19 +31,15 @@ const RouteTypeSchema = new mongoose.Schema
 
 const ZoneSchema = new mongoose.Schema
     ({
-        id: { type: Number, required: true },
-        geometry: [{ lat: { type: Number, required: true }, lon: { type: Number, required: true } }],
+        zoneId: { type: String, required: true },
+        geometry: [{ 1: { type: Number, required: true }, 0: { type: Number, required: true } }],
         tags: {
-            landuse: { type: String, required: false },
-            leisure: { type: String, required: false },
-            natural: { type: String, required: false }
+            landuse: { type: String, required: true }
         },
         routes: {
-
         },
         trafficLights: { type: Number, required: true },
         buildings: {
-
         }
     });
 

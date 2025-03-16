@@ -4,7 +4,6 @@ import { TRAFFIC_RISC_CAR, TRAFFIC_RISC_PEDESTRIAN } from "../config/constants";
 import { ProcessedZone, Node, BuildingsTypes, RoutesTypes } from "../interfaces/interfaces";
 import { ProcessedRoute } from "../src";
 import { checkTimeForRoute, checkTimeForBuilding, checkAdhanTime, checkTimeForZone } from './TimeController';
-import mongoose from "mongoose";
 
 const routeFromProcessedRoutes = (routes: any[]): ProcessedRoute[] => {
     const processedRoutes = routes.map((route): ProcessedRoute => {
@@ -16,15 +15,12 @@ const routeFromProcessedRoutes = (routes: any[]): ProcessedRoute[] => {
     });
     return processedRoutes;
 };
-
-
 const zoneFromProcessedZones = (zones: any[]): ProcessedZone[] => {
     const processedZones: ProcessedZone[] = zones.map((zone): ProcessedZone => {
         return {
-            id: zone.id,
+            zoneId: zone.zoneId,
             geometry: zone.geometry || [],  // Remplace 'nodes' par 'geometry'
-            type: zone.tags.landuse || zone.tags.leisure || zone.tags.natural || 'unknown',  // Garder la logique pour déterminer 'type'
-            nodes: [],  // Ou une logique pour récupérer les nodes si nécessaire
+            type: zone.tags.landuse,  // Garder la logique pour déterminer 'type'
             routes: new Map(Object.entries(zone.routes || {})),  // Convertir routes en Map si ce n'est pas déjà fait
             trafficLights: zone.trafficLights || 0,  // Convertir trafficLights en Map
             buildings: new Map(Object.entries(zone.buildings || {})),// Convertir buildings en Map
@@ -33,7 +29,6 @@ const zoneFromProcessedZones = (zones: any[]): ProcessedZone[] => {
     });
     return processedZones;
 };
-
 const joinBuildingAndTypes = async () => {
     try {
         const buildings = await Building.find();
@@ -55,7 +50,6 @@ const joinBuildingAndTypes = async () => {
         throw error;
     }
 };
-
 const joinRouteAndTypes = async () => {
     try {
         console.log("je suis dns joiture routes avant")
@@ -79,7 +73,6 @@ const joinRouteAndTypes = async () => {
         throw error;
     }
 };
-
 const joinZoneAndTypes = async () => {
     try {
         // const zones = zoneFromProcessedZones(await Zone.find());
@@ -104,7 +97,6 @@ const joinZoneAndTypes = async () => {
         throw error;
     }
 };
-
 const joinTrafficLight = async () => {
     try {
         const trafficLights = await TrafficLight.find();
@@ -138,14 +130,14 @@ const joinTrafficLight = async () => {
  * @returns True if the point is inside the polygon, false otherwise.
  */
 
-function isPointInZone(pointCoords: Node, zoneCoords: Node[]): boolean {
+function isPointInZone(pointCoords: Node, zoneGeometry: { "0": number; "1": number }[]): boolean {
     const { lat: y, lon: x } = pointCoords;
     let inside = false;
-    const n = zoneCoords.length;
+    const n = zoneGeometry.length;
 
     for (let i = 0, j = n - 1; i < n; j = i++) {
-        const xi = zoneCoords[i].lon, yi = zoneCoords[i].lat;
-        const xj = zoneCoords[j].lon, yj = zoneCoords[j].lat;
+        const xi = zoneGeometry[i]["0"], yi = zoneGeometry[i]["1"];
+        const xj = zoneGeometry[j]["0"], yj = zoneGeometry[j]["1"];
         // ((yi > y) !== (yj > y)) to make sure that the point we are checking is between the two points of the edge
         // (x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) to make sure that the point is on the right side of the edge 
         const intersect = ((yi > y) !== (yj > y)) && (x < ((xj - xi) * (y - yi)) / (yj - yi) + xi);
@@ -155,6 +147,7 @@ function isPointInZone(pointCoords: Node, zoneCoords: Node[]): boolean {
     }
     return inside;
 }
+
 const organizeDb = async (req: Request, res: Response) => {
     try {
         let buildings = await Building.find();
@@ -360,7 +353,7 @@ const getZonesWithRisc = async (req: Request, res: Response) => {
             zone.car += trafficLightsInZone * TRAFFIC_RISC_CAR
             zone.pedestrian += trafficLightsInZone * TRAFFIC_RISC_PEDESTRIAN
               if (zone.car || zone.pedestrian)
-                  console.log("✅ zone id :", zone.id, "car : ", zone.car, "pedestrian :", zone.pedestrian)
+                  console.log("✅ zone id :", zone.zoneId, "car : ", zone.car, "pedestrian :", zone.pedestrian)
               else
                   console.log("❌ Zone without Risk ")
               

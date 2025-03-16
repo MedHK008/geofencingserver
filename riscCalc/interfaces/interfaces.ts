@@ -1,5 +1,3 @@
-import mongoose from "mongoose";
-
 export interface ProcessedRoute {
     id: number;
     type: string;
@@ -7,10 +5,9 @@ export interface ProcessedRoute {
 }
 
 export interface ProcessedZone {
-    id: number;
-    geometry: { lat: number; lon: number }[];
+    zoneId: string;
+    geometry: { 0: number; 1: number }[];
     type: string;
-    nodes: Node[];
     routes: Map<string, number>;
     trafficLights: number;
     buildings: Map<string, number>;
