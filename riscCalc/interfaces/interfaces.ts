@@ -11,6 +11,7 @@ export interface ProcessedZone {
     routes: Map<string, number>;
     trafficLights: number;
     buildings: Map<string, number>;
+    boundingBox: { minX: number; maxX: number; minY: number; maxY: number };
 
 }
 

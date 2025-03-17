@@ -40,7 +40,13 @@ const ZoneSchema = new mongoose.Schema
         },
         trafficLights: { type: Number, required: true },
         buildings: {
-        }
+        },
+        boundingBox: {
+            minX: { type: Number, required: true },
+            maxX: { type: Number, required: true },
+            minY: { type: Number, required: true },
+            maxY: { type: Number, required: true }
+        }   
     });
 
 const ZoneTypeSchema = new mongoose.Schema

@@ -3,6 +3,7 @@ import { getZonesWithRisc } from "../controllers/riscController";
 
 const zonesWithRisc = express.Router();
 
-zonesWithRisc.get('/risc', getZonesWithRisc);
+zonesWithRisc.post('/risc', getZonesWithRisc);
 
 export default zonesWithRisc;
+
