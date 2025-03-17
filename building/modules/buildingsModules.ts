@@ -6,10 +6,6 @@ const buildingSchema = new mongoose.Schema({
     lat: { type: Number, required: true },
     lon: { type: Number, required: true },
     name: { type: String, required: true },
-
-
-
-
 })
 
 export const buildingModule = mongoose.models.buildings || mongoose.model("building", buildingSchema);
