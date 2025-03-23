@@ -1,5 +1,5 @@
-import { BuildingsTypes, RoutesTypes, ZonesTypes} from '../interfaces/interfaces';
-import dotenv  from 'dotenv';
+import { BuildingsConfig, ProcessedBuilding, ProcessedZone, RiscLevel, RoutesConfig, ZonesConfig } from '../interfaces/interfaces';
+import dotenv from 'dotenv';
 import axios from 'axios';
 
 dotenv.config();
@@ -13,156 +13,17 @@ function time() {
     let time = hours + minutes / 60;
     return time;
 }
-
-
-export const checkTimeForBuilding=(building: BuildingsTypes):  BuildingsTypes=> {
-    switch (building.type) {
-        case "school":
-        case "university":
-            if(time()==8.5 || time()==10.5|| time()==12.5 || time()==14.5 || time()==16.5 || time()==18.5){
-                building.pedestrian+=10;
-                building.car+=10;
-            }
-            break;
-        case "bank":
-        case "dentist":
-        case "social_facility":
-        case "post_box":
-        case "bureau_de_change":
-        case "veterinary":
-            if(time()<9 || time()>17){
-                building.pedestrian-=3;
-                building.car-=3;
-            }
-        case "place_of_worship":
-            console.log('place of worship');
-            building = checkAdhanTime(building);
-            break;
-        default:
-            return building;
-    }
-    return building;
-}
-
-export const checkTimeForZone = (zone: ZonesTypes): ZonesTypes => {
-    switch (zone.type) {
-        case "beach":
-        case "coastline":
-            if (time() <= 8 || time() >= 20) {
-                zone.pedestrian += 20;
-            }
-            break;
-        case "grassland":
-        case "water":
-        case "wood":
-            if (time() <= 8 || time() >= 20) {
-                zone.pedestrian += 40;
-            }
-            break;
-        
-        case "cemetery":
-            if (time() <= 8 || time() >= 20) {
-                zone.pedestrian = 100;
-                zone.car += 20;
-            }
-            break;
-        case "basin":
-        case "construction":
-            if (time() <= 8 || time() >= 20) {
-                zone.pedestrian += 3;
-            }
-            break;
-        case "farmland":
-        case "forest":
-        case "grass":
-            if (time() >= 6 && time() <= 18) {
-                zone.pedestrian += 2;
-            }
-            break;
-        case "industrial":
-        case "railway":
-        case "residential":
-            console.log(time());
-            if (time() >= 6 && time() <= 20) {
-                zone.pedestrian -= 10;
-            } else {
-                zone.pedestrian += 10;
-            }
-            break;
-        case "golf_course":
-        case "park":
-        case "pitch":
-        case "sports_centre":
-            if (time() >= 6 || time() <= 18) {
-                zone.pedestrian += 15;
-            }
-            break;
-        default:
-            return zone;
-    }
-    return zone;
-}
-
-export const checkTimeForRoute = (route: RoutesTypes): RoutesTypes => {
-    switch (route.type) {
-        case 'construction':
-            if (time() <= 6 || time() >= 18) {
-                route.pedestrian += 5;
-                route.car += 5;
-            }
-            break;
-        case 'footway':
-        case 'path':
-        case 'pedestrian':
-            if (time() <= 6 || time() >= 18) {
-                route.pedestrian += 20;
-            }
-            break;
-        case 'living_street':
-        case 'residential':
-            if (time() <= 6 || time() >= 18) {
-                route.pedestrian += 5;
-                route.car += 10;
-            }
-            break;
-        case 'motorway':
-        case 'motorway_link':
-        case 'primary':
-        case 'primary_link':
-        case 'secondary':
-        case 'secondary_link':
-        case 'tertiary':
-        case 'tertiary_link':
-        case 'trunk':
-        case 'trunk_link':
-        case 'unclassified':
-            if (time() <= 6 || time() >= 18) {
-                route.car += 15;
-            }
-            break;
-        case 'service':
-        case 'steps':
-        case 'track':
-            if (time() <= 6 || time() >= 18) {
-                route.pedestrian += 5;
-            }
-            break;
-        default:
-            return route;
-    }
-    return route;
-}
-
-export const checkAdhanTime = (building: BuildingsTypes): BuildingsTypes => {
+export const checkAdhanTime = async (building: ProcessedBuilding): Promise<ProcessedBuilding> => {
     const currentTime = time();
 
+    try {
+        const response = await axios.get(ALADHAN_API, {
+            params: {
+                city: 'Mohammedia',
+                country: 'Morocco'
+            }
+        });
 
-    axios.get(ALADHAN_API,{
-        params: {
-            city: 'Mohammedia',
-            country: 'Morocco'
-        }
-    }).then((response) => {
         const data = (response.data as { data: any }).data;
         const timings = data.timings;
         const prayerTimes = [
@@ -173,15 +34,71 @@ export const checkAdhanTime = (building: BuildingsTypes): BuildingsTypes => {
             parseFloat(timings.Isha.replace(':', '.'))
         ];
 
-        console.log('Prayer times:', prayerTimes);
 
         prayerTimes.forEach(prayerTime => {
             if (currentTime >= (prayerTime - 0.0833) || currentTime <= (prayerTime + 0.3333)) {
-                building.pedestrian += 10;
-                building.car += 10;
+                building.car = RiscLevel.FAIBLE;
             }
         });
-    });
+    } catch (error) {
+        console.error('Error fetching prayer times:', error);
+    }
 
     return building;
-}
+};
+
+
+
+export const checkTimeForBuilding = async (building: ProcessedBuilding): Promise<ProcessedBuilding> => {
+    const today = new Date();
+    const formattedDate = today.toISOString().split("T")[0]; // "YYYY-MM-DD"
+    const month = today.getMonth() + 1;
+    const currentHour = today.getHours();
+    if (building.type === "place_of_worship") {
+        return checkAdhanTime(building);
+    }
+    if (building.unactif_mouth.includes(month) || building.unactif_days.includes(formattedDate)) {
+        return building;
+    }
+    let isRisc = false;
+    if (building.activity_hours.length > 0) {
+        isRisc = building.activity_hours.some(hourRange =>
+            currentHour >= hourRange.begin && currentHour <= hourRange.end
+        );
+
+        if (!isRisc) return building;
+
+        switch (building.type) {
+            case "school":
+                building.car = RiscLevel.MOYENNE;
+                break;
+            case "university":
+                building.car = RiscLevel.FAIBLE;
+                break;
+            case "driver_training":
+                building.pedestrian = RiscLevel.FAIBLE;
+                building.car = RiscLevel.MOYENNE;
+                break;
+            case "taxi":
+                building.car = RiscLevel.MOYENNE;
+                building.pedestrian = RiscLevel.FAIBLE;
+                break;
+            case "hospital":
+                building.car = RiscLevel.MOYENNE
+                break;
+            case "marketplace":
+                building.car = RiscLevel.MOYENNE;
+                break;
+            default:
+                console.warn(`Unknown building type: ${building.type}`);
+                break;
+        }
+
+        return building;
+    }
+
+    return building;
+};
+
+
+

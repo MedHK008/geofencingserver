@@ -1,125 +1,77 @@
 import { Request, Response } from "express";
-import { Building, BuildingType, Route, RouteType, Zone, ZoneType, TrafficLight } from "../modules/riscModule";
-import { TRAFFIC_RISC_CAR, TRAFFIC_RISC_PEDESTRIAN } from "../config/constants";
-import { ProcessedZone, Node, BuildingsTypes, RoutesTypes } from "../interfaces/interfaces";
-import { ProcessedRoute } from "../src";
-import { checkTimeForRoute, checkTimeForBuilding, checkAdhanTime, checkTimeForZone } from './TimeController';
-import mongoose from "mongoose";
-
-const routeFromProcessedRoutes = (routes: any[]): ProcessedRoute[] => {
-    const processedRoutes = routes.map((route): ProcessedRoute => {
-        return {
-            id: route.id || 0,        // Valeur par défaut si id est manquant
-            type: route.tags.highway,  // 'unknown' si highway est manquant
-            nodes: route.nodes || []  // Tableau vide si nodes est manquant
-        };
-    });
-    return processedRoutes;
-};
+import { Config, Zone } from "../modules/riscModule";
+import { ProcessedZone, Node, BuildingsConfig, RoutesConfig, BuildingInterface, ConfigInterface, ProcessedBuilding, RouteInterface, ProcessedRoute, ZoneInterface, RiscLevel } from "../interfaces/interfaces";
+import { checkTimeForBuilding } from './TimeController';
+import { getWeather } from "./weatherRoute";
 
 
-const zoneFromProcessedZones = (zones: any[]): ProcessedZone[] => {
-    const processedZones: ProcessedZone[] = zones.map((zone): ProcessedZone => {
-        return {
-            zoneId: zone.id,
-            geometry: zone.geometry || [],
-            type: zone.tags.landuse || zone.tags.leisure || zone.tags.natural || 'unknown',
-            routes: new Map(Object.entries(zone.routes || {})),
-            trafficLights: zone.trafficLights || 0,
-            buildings: new Map(Object.entries(zone.buildings || {})),
 
-        };
-    });
-    return processedZones;
-};
 
-const joinBuildingAndTypes = async () => {
+
+
+
+
+const joinBuildingAndRisc = async (config: ConfigInterface, buildings: BuildingInterface[]): Promise<ProcessedBuilding[]> => {
     try {
-        const buildings = await Building.find();
-        let buildingTypes = await BuildingType.find();
+        return buildings.map(building => {
+            const ourConfig = config.buildings.find(b => b.type === building.type);
 
-        buildingTypes = buildingTypes.map(buildingType => checkTimeForBuilding(buildingType));
-
-        const joinedData = buildings.map(building => {
-            const buildingType = buildingTypes.find(type => type.type === building.type);
             return {
-                ...building.toObject(),
-                pedestrian: buildingType?.pedestrian || 0,
-                car: buildingType?.car || 0
+                ...building,
+                pedestrian: ourConfig?.riscP || RiscLevel.NONE,
+                car: ourConfig?.riscC || RiscLevel.NONE,
             };
         });
-        return joinedData;
     } catch (error) {
-        console.error('Error joining building and types:', error);
+        console.error("Error joining buildings and risks:", error);
         throw error;
     }
 };
 
-const joinRouteAndTypes = async () => {
+
+const joinRouteAndRisc = async (config: ConfigInterface, routes: RouteInterface[]): Promise<ProcessedRoute[]> => {
     try {
-        console.log("je suis dns joiture routes avant")
-        const routes = routeFromProcessedRoutes(await Route.find());
-        console.log("je suis dns joiture des routes apres")
-        let routeTypes = await RouteType.find();
 
-        routeTypes = routeTypes.map(routeType => checkTimeForRoute(routeType));
 
-        const joinedData = routes.map(route => {
-            const routeType = routeTypes.find(type => type.type === route.type);
+        return routes.map(route => {
+            const ourConfig = config.routes.find(r => r.type === route.type);
+
             return {
                 ...route,
-                pedestrian: routeType?.pedestrian || 0,
-                car: routeType?.car || 0
+                pedestrian: ourConfig?.riscP || RiscLevel.NONE,
+                car: ourConfig?.riscC || RiscLevel.NONE,
             };
         });
-        return joinedData;
     } catch (error) {
-        console.error('Error joining route and types:', error);
+        console.error("Error joining routes and risks:", error);
         throw error;
     }
 };
 
-const joinZoneAndTypes = async () => {
+
+
+const joinZoneAndRisc = async (config: ConfigInterface, zones: ZoneInterface[]): Promise<ProcessedZone[]> => {
     try {
 
-        const allZones = await Zone.find();
-        const zones = zoneFromProcessedZones(allZones);
-        let zoneTypes = await ZoneType.find();
-
-        zoneTypes = zoneTypes.map(zoneType => checkTimeForZone(zoneType));
-
-        const joinedData = zones.map(zone => {
-            const zoneType = zoneTypes.find(type => type.type === zone.type);
+        return zones.map(zone => {
+            const ourConfig = config.zones.find(z => z.type === zone.type);
             return {
                 ...zone,
-                pedestrian: zoneType?.pedestrian || 0,
-                car: zoneType?.car || 0
+                riscP: ourConfig?.riscP || RiscLevel.NONE,
+                riscC: ourConfig?.riscC || RiscLevel.NONE,
+                car: { none: 0, faible: 0, moyenne: 0, eleve: 0 },
+                pedestrian: { none: 0, faible: 0, moyenne: 0, eleve: 0 },
+
             };
         });
-
-        return joinedData;
     } catch (error) {
-        console.error('Error joining zone and types:', error);
+        console.error("Error joining zones and risks:", error);
         throw error;
     }
 };
 
-const joinTrafficLight = async () => {
-    try {
-        const trafficLights = await TrafficLight.find();
-        const trafficLightsWithRisc = trafficLights.map(trafficLight => {
-            return {
-                ...trafficLight.toObject(),
-                pedestrian: TRAFFIC_RISC_PEDESTRIAN,
-                car: TRAFFIC_RISC_CAR
-            };
-        });
-        return trafficLightsWithRisc;
-    } catch (error) {
-        console.error('Error joining traffic lights:', error);
-        throw error;
-    }
-};
+
+
 
 /**
  * Determine if a point is inside a polygon using the ray-casting algorithm.
@@ -162,275 +114,124 @@ function isPointInZone(pointCoords: Node, zoneCoords: Node[]): boolean {
 
     return inside;
 }
-const formatGeometry = (geometry: any[]): { lat: number, lon: number }[] => {
-    return geometry.map(coord => {
-        const newCoord = coord.toObject();
-        return {
-            lat: newCoord['1'],
-            lon: newCoord['0']
-        };
-    });
-};
-
-
-const organizeDb = async (req: Request, res: Response) => {
-    try {
-        let buildings = await Building.find();
-        let routes = await Route.find();
-        let zones = await Zone.find();
-        let trafficLights = await TrafficLight.find();
-
-
-        await Promise.all(zones.map(async (zone) => {
-            let buildingMap: Map<string, number> = new Map();
-            let routeMap: Map<string, number> = new Map();
-            let trafficLightnumber = 0;
-            const standardNode = formatGeometry(zone.geometry);
-
-
-            // Filter Buildings - Utiliser le type de bâtiment comme clé et compter les occurrences
-            buildings = buildings.filter(building => {
-                if (isPointInZone({ lat: building.lat, lon: building.lon }, standardNode)) {
-                    // Utiliser 'building.type' comme clé
-                    const type = building.type || 'unknown';
-                    buildingMap.set(type, (buildingMap.get(type) || 0) + 1); // Incrémenter le compteur pour ce type
-                    return false;
-                }
-                return true;
-            });
-
-            // Filter Routes - Utiliser le type de route comme clé et compter les occurrences
-            routes = routes.map(route => {
-                const originalNodeCount = route.nodes.length;
-                route.nodes = route.nodes.filter((node: Node) => !isPointInZone(node, standardNode));
 
 
 
-                if (route.nodes.length < originalNodeCount) {
-                    const type = route.tags.highway;
-                    routeMap.set(type, (routeMap.get(type) || 0) + 1); // Incrémenter le compteur pour ce type
-                }
-                return route;
-            }).filter(route => route.nodes.length > 0);
-
-            // Filter Traffic Lights - Utiliser le nom du feu de circulation comme clé et compter les occurrences
-            trafficLights = trafficLights.filter(trafficLight => {
-                if (isPointInZone({ lat: trafficLight.lat, lon: trafficLight.lon }, standardNode)) {
-                    console.log(trafficLightnumber)
-
-                    trafficLightnumber++;
-                    return false;
-                }
-                return true;
-            });
-
-            // Vérifier si des valeurs existent avant la mise à jour
-            console.log(zone._id, buildingMap, routeMap, trafficLightnumber);
-            if (buildingMap.size > 0 || routeMap.size > 0 || trafficLightnumber > 0) {
-                try {
-                    const result = await Zone.updateOne(
-                        { _id: zone._id },
-                        {
-                            $set: {
-                                buildings: Object.fromEntries(buildingMap), // Convertir le Map en objet clé-valeur pour buildings
-                                routes: Object.fromEntries(routeMap), // Convertir le Map en objet clé-valeur pour routes
-                                trafficLights: trafficLightnumber // Mettre à jour le nombre de feux de circulation
-                            }
-                        }
-
-                    );
-
-                    console.log(`🔍 Documents modifiés: ${result.modifiedCount}`);
-                    console.log(`✅ Mise à jour de la zone ${zone.zoneId} réussie !`);
-                } catch (error) {
-                    console.error(`❌ Erreur lors de la mise à jour de la zone ${zone.zoneId}:`, error);
-                }
-            } else {
-                console.log(`⚠️ Aucun changement pour la zone ${zone.zoneId}`);
-            }
-
-        }));
-        res.status(200).json({ message: "OK" });
-    } catch (error) {
-        console.error("Error in organizeDb:", error);
-        res.status(500).json({ message: "NO" });
-    }
-};
-
-const joinZoneAndComponents = async () => {
-
-    let buildings = await joinBuildingAndTypes();
-
-    // let processedRoutes = await joinRouteAndTypes();
-    console.log("je suis dns joiture des zones apres les routes")
-    let processedZones = await joinZoneAndTypes();
-    console.log("je suis dns joiture des zones apres les zones")
-    let trafficLights = await joinTrafficLight();
-    console.log("je suis dns joiture des zones apes les trafic")
-    return processedZones.map(zone => {
-        return {
-            ...zone,
-            //buildings: buildings.filter(building => zone.Buildings.includes(building._id)),
-            //routes: processedRoutes.filter(route => zone.Routes.includes(route._id)),
-            //trafficLights: trafficLights.filter(light => zone.TrafficLights.includes(light._id))
-        };
-    });
-};
 
 
 
-export const ProcessedZonesWithRisc = async () => {
-    /*let buildings = await joinBuildingAndTypes();
-    let processedRoutes = await joinRouteAndTypes();
-    let processedZones = await joinZoneAndTypes();
-    let trafficLights = await joinTrafficLight();
-    let Zones = await joinZoneAndComponents();
-    console.log("je suis dns joiture des zones apres le jointure")
-    //console.log('before time check pedestrian:', processedZones[0].pedestrian);
 
-    try {
-        Zones.forEach(zone => {
-            console.log('Processing zone:', zone.id);
-            // console.log('after time check pedestrian:', zone.pedestrian);
-            // console.log('after time check car:', zone.car);
-            zone.buildings.forEach(building => {   
-                    if (building.type === 'place_of_worship') {
-                        console.log('place of worship found');
-                    }
-                    zone.pedestrian += building.pedestrian;
-                    zone.car += building.car;
-                    //buildings = buildings.filter(b => b.id !== building.id);
-                
-            });
 
-            /* zone.routes.forEach(route => {
-                zone.pedestrian += route.pedestrian;
-                zone.car += route.car;
-               // processedRoutes = processedRoutes.filter(r => r.id !== route.id);
-            });
 
-            zone.trafficLights.forEach(light => {
-                zone.pedestrian += light.pedestrian;
-                zone.car += light.car;
-               // trafficLights = trafficLights.filter(tl => tl.id !== light.id);
-            });
-            console.log('after time check pedestrian:', zone.pedestrian);
-            console.log('after time check car:', zone.car);
 
-        });
-        return Zones;
-    } catch (error) {
-        console.error('Error calculating RISC for zones:', error);
-    }
-*/
-};
-/*
-const getZonesWithRisc = async (req: Request, res: Response) => {
-    try {
-        console.log("je suis dans getZonesWithRisc");
-        const processedZones = await ProcessedZonesWithRisc();
-        if (!processedZones) {
-            res.status(500).json({ success: false, message: 'Error processing zones' });
-            return;
-        }
-        const zonesWithoutNodes = processedZones.map(zone => {
-            const { nodes, ...zoneWithoutNodes } = zone;
-            return zoneWithoutNodes;
-        });
-        res.status(200).json({ success: true, processedZones: zonesWithoutNodes });
-    } catch (error) {
-        console.error('Error getting zones with RISC:', error);
-        res.status(500).json({ success: false, message: 'Internal server error' });
-    }
 
-};
-*/
-const getRiskOfBuilding = (buildingTypes: BuildingsTypes[], type: string): { car: number, pedestrian: number } => {
-    const building = buildingTypes.find(buildingType => buildingType.type === type);
-    if (!building)
-        return { car: 0, pedestrian: 0 };
-
-    return { car: building.car, pedestrian: building.pedestrian };
-}
-const getRiskOfRoute = (routes: RoutesTypes[], type: string): { car: number, pedestrian: number } => {
-    const route = routes.find(route => route.type === type);
-    if (!route) {
-        return { car: 0, pedestrian: 0 };
-    }
-    return { car: route.car, pedestrian: route.pedestrian };
-}
 
 const getZonesWithRisc = async (req: Request, res: Response) => {
     const start = Date.now();
     try {
-        let zones = await joinZoneAndTypes()
-        let buildingTypes = await BuildingType.find()
-        let routeTypes = await RouteType.find()
+        let zones: ZoneInterface[] = req.body.zones
+        const config: ConfigInterface[] = await Config.find().lean();
+        const newZones = await Promise.all(
+            zones.map(async (zone) => {
+                return await Zone.findOne({ zoneId: zone.zoneId })
+                    .populate('buildings')
+                    .populate('routes')
+                    .lean();
+            })
+        );
 
-        zones.forEach(zone => {
-
-
-            const buildingsInZone = zone.buildings
-            const routesInZone = zone.routes
-            const trafficLightsInZone = zone.trafficLights
-            for (let [buildingType, number] of buildingsInZone.entries()) {
-                const risk = getRiskOfBuilding(buildingTypes, buildingType);
-                zone.car += number * risk.car
-                zone.pedestrian += number * risk.pedestrian
-            }
-            for (let [routeType, number] of routesInZone.entries()) {
-                const risk = getRiskOfRoute(routeTypes, routeType);
-
-                zone.car += number * risk.car
-                zone.pedestrian += number * risk.pedestrian
-            }
-            zone.car += trafficLightsInZone * TRAFFIC_RISC_CAR
-            zone.pedestrian += trafficLightsInZone * TRAFFIC_RISC_PEDESTRIAN
-
+        let anotherzones: ProcessedZone[] = await joinZoneAndRisc(config[0], newZones)
+        anotherzones = await Promise.all(anotherzones.map(async (zone) => {
+            zone.car = { none: 0, faible: 0, moyenne: 0, eleve: 0 };
+            zone.pedestrian = { none: 0, faible: 0, moyenne: 0, eleve: 0 };
+            zone.buildings = await joinBuildingAndRisc(config[0], zone.buildings)
+            zone.routes = await joinRouteAndRisc(config[0], zone.routes)
+            zone.buildings = await Promise.all(
+                zone.buildings.map(async (building) => {
+                    return checkTimeForBuilding(building);
+                })
+            );
 
 
-        })
-        const minCar: number = zones.reduce((min, current) => {
-            return current.car < min ? current.car : min;
-        }, 0);
+            zone.buildings.forEach(building => {
+                if (building.car === RiscLevel.NONE) zone.car.none++;
+                if (building.car === RiscLevel.FAIBLE) zone.car.faible++;
+                if (building.car === RiscLevel.MOYENNE) zone.car.moyenne++;
+                if (building.car === RiscLevel.ELEVE) zone.car.eleve++;
 
-        const maxCar: number = zones.reduce((max, current) => {
-            return current.car > max ? current.car : max;
-        }, 0);
+                if (building.pedestrian === RiscLevel.NONE) zone.pedestrian.none++;
+                if (building.pedestrian === RiscLevel.FAIBLE) zone.pedestrian.faible++;
+                if (building.pedestrian === RiscLevel.MOYENNE) zone.pedestrian.moyenne++;
+                if (building.pedestrian === RiscLevel.ELEVE) zone.pedestrian.eleve++;
+            });
 
-        const minPed: number = zones.reduce((min, current) => {
-            return current.pedestrian < min ? current.pedestrian : min;
-        }, 0);
+            zone.routes.forEach(route => {
+                if (route.car === RiscLevel.NONE) zone.car.none++;
+                if (route.car === RiscLevel.FAIBLE) zone.car.faible++;
+                if (route.car === RiscLevel.MOYENNE) zone.car.moyenne++;
+                if (route.car === RiscLevel.ELEVE) zone.car.eleve++;
 
-        const maxPed: number = zones.reduce((max, current) => {
-            return current.pedestrian > max ? current.pedestrian : max;
-        }, 0);
-
-        const ecartCar: number = maxCar - minCar;
-        const ecartPed: number = maxPed - minPed;
-
-        zones.forEach(zone => {
-            zone.car = (zone.car - minCar) / ecartCar;
-            zone.pedestrian = (zone.pedestrian - minPed) / ecartPed;
-            if (zone.car || zone.pedestrian)
-                console.log("✅ zone id :", zone.zoneId, "car : ", zone.car, "pedestrian :", zone.pedestrian)
-            else
-                console.log("❌ Zone without Risk ")
-
-        })
+                if (route.pedestrian === RiscLevel.NONE) zone.pedestrian.none++;
+                if (route.pedestrian === RiscLevel.FAIBLE) zone.pedestrian.faible++;
+                if (route.pedestrian === RiscLevel.MOYENNE) zone.pedestrian.moyenne++;
+                if (route.pedestrian === RiscLevel.ELEVE) zone.pedestrian.eleve++;
+            });
 
 
+            const state = await getWeather();
+            if (state === RiscLevel.NONE) zone.car.none++;
+            if (state === RiscLevel.FAIBLE) zone.car.faible++;
+            if (state === RiscLevel.MOYENNE) zone.car.moyenne++;
+            if (state === RiscLevel.ELEVE) zone.car.eleve++;
 
+
+            const riscC = zone.car.faible * 0.15 + zone.car.moyenne * 0.35 + zone.car.eleve * 0.5
+            const riscP = zone.pedestrian.faible * 0.15 + zone.pedestrian.moyenne * 0.35 + zone.pedestrian.eleve * 0.5
+
+            if (riscC > 0 && riscC <= 0.15) zone.riscC = RiscLevel.NONE
+            else if (riscC > 0.15 && riscC <= 0.35) zone.riscC = RiscLevel.FAIBLE
+            else if (riscC > 0.35 && riscC <= 0.75) zone.riscC = RiscLevel.MOYENNE
+            else if (riscC > 0.75 && riscC <= 1) zone.riscC = RiscLevel.ELEVE
+
+            if (riscP > 0 && riscP <= 0.15) zone.riscP = RiscLevel.NONE
+            else if (riscP > 0.15 && riscP <= 0.35) zone.riscP = RiscLevel.FAIBLE
+            else if (riscP > 0.35 && riscP <= 0.75) zone.riscP = RiscLevel.MOYENNE
+            else if (riscP > 0.75 && riscP <= 1) zone.riscP = RiscLevel.ELEVE
+
+
+            console.log(`
+                📍 Zone ID: ${zone.zoneId}
+                ----------------------------------------
+                🚧 Risque Collision (riscC): ${riscC.toFixed(2)}
+                   ➡️ Niveau: ${zone.riscC} ${zone.riscC === RiscLevel.NONE ? "✅ (Aucun)" :
+                    zone.riscC === RiscLevel.FAIBLE ? "🟢 (Faible)" :
+                        zone.riscC === RiscLevel.MOYENNE ? "🟠 (Moyen)" :
+                            zone.riscC === RiscLevel.ELEVE ? "🔴 (Élevé)" : ""}
+                
+                🚶‍♂️ Risque Piétons (riscP): ${riscP.toFixed(2)}
+                   ➡️ Niveau: ${zone.riscP} ${zone.riscP === RiscLevel.NONE ? "✅ (Aucun)" :
+                    zone.riscP === RiscLevel.FAIBLE ? "🟢 (Faible)" :
+                        zone.riscP === RiscLevel.MOYENNE ? "🟠 (Moyen)" :
+                            zone.riscP === RiscLevel.ELEVE ? "🔴 (Élevé)" : ""}
+                ----------------------------------------
+                `);
+            return zone;
+        }));
+
+
+
+        console.log(anotherzones)
         const end = Date.now() - start;
         console.log(`Execution time: ${end}ms`);
 
-        res.status(200).json({ success: true, zones, end });
+        res.status(200).json({ success: true, anotherzones, end });
     } catch (error) {
-        res.status(500).json({ success: false, message: 'Internal server error' });
+        console.error("Error processing zones:", error);
+        res.status(500).json({ success: false, message: "Internal server error" });
     }
+};
 
-}
-    
 
-export { getZonesWithRisc, organizeDb };
+
+export { getZonesWithRisc };
 
