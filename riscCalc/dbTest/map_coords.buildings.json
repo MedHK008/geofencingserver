@@ -1,0 +1,51 @@
+[{
+  "_id": {
+    "$oid": "67df3affc9f53b95353487a8"
+  },
+  "id": 1,
+  "type": "school",
+  "lat": 48.8566,
+  "lon": 2.3522,
+  "name": "École Maternelle",
+  "unactif_mouth": [
+    [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ]
+  ],
+  "unactif_days": [],
+  "activity_hours": [
+    [
+      9,
+      18
+    ]
+  ]
+},
+{
+  "_id": {
+    "$oid": "67df3affc9f53b95353487a9"
+  },
+  "id": 2,
+  "type": "hospital",
+  "lat": 48.8738,
+  "lon": 2.295,
+  "name": "Hôpital Saint-Louis",
+  "unactif_mouth": [],
+  "unactif_days": [],
+  "activity_hours": [
+    [
+      0,
+      24
+    ]
+  ]
+}]

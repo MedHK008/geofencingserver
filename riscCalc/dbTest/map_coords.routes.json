@@ -1,0 +1,66 @@
+[{
+  "_id": {
+    "$oid": "67df3b35c9f53b95353487ad"
+  },
+  "id": 1,
+  "nodes": [
+    {
+      "lat": 48.8566,
+      "lon": 2.3522
+    },
+    {
+      "lat": 48.8576,
+      "lon": 2.3532
+    }
+  ],
+  "tags": {
+    "highway": "motorway",
+    "name": "A1 Motorway",
+    "speed": 130,
+    "accident": 5
+  }
+},
+{
+  "_id": {
+    "$oid": "67df3b35c9f53b95353487ae"
+  },
+  "id": 2,
+  "nodes": [
+    {
+      "lat": 48.8738,
+      "lon": 2.295
+    },
+    {
+      "lat": 48.875,
+      "lon": 2.2965
+    }
+  ],
+  "tags": {
+    "highway": "primary",
+    "name": "Route Nationale 2",
+    "speed": 90,
+    "accident": 2
+  }
+},
+{
+  "_id": {
+    "$oid": "67df3b35c9f53b95353487af"
+  },
+  "id": 3,
+  "nodes": [
+    {
+      "lat": 48.8566,
+      "lon": 2.3522
+    },
+    {
+      "lat": 48.859,
+      "lon": 2.355
+    }
+  ],
+  "tags": {
+    "highway": "secondary",
+    "name": "Rue de Paris",
+    "speed": 50,
+    "accident": 1
+  }
+}]
