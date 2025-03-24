@@ -19,9 +19,7 @@ const getWeather = async () => {
         console.log(`Weather in Mohammedia: ${weatherState} `);
         if (weatherState === "clear" || weatherState === "clouds") return RiscLevel.NONE;
         if (weatherState === "rain" || weatherState === "mist" || weatherState === "dust") return RiscLevel.FAIBLE;
-        if (weatherState === "thunderstorm " || weatherState === "haze " || weatherState === "dust" || weatherState === "squall") return RiscLevel.MOYENNE
-
-
+        if (weatherState === "thunderstorm " || weatherState === "haze " || weatherState === "dust" || weatherState === "squall") return RiscLevel.MOYENNE;
         return RiscLevel.ELEVE
 
     } catch (error) {

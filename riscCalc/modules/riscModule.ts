@@ -60,17 +60,14 @@ const configSchema = new mongoose.Schema({
         riscC: String,
     }],
     buildings: [{
-
         type: String,
         riscP: String,
         riscC: String,
     }],
     routes: [{
-
         type: String,
         riscP: String,
         riscC: String,
-
     }],
     building_mappings: [{
         original_type: String,
@@ -91,14 +88,14 @@ const configSchema = new mongoose.Schema({
         min_lon: Number,
         max_lon: Number
     }]
-});
+},{collection:'config'});
 
 
 
 
 
 
-export const Config = mongoose.models.configs || mongoose.model('Config', configSchema);
+export const Config = mongoose.models.configs || mongoose.model('config', configSchema);
 
 export const Building = mongoose.models.buildings || mongoose.model('buildings', BuildingSchema);
 

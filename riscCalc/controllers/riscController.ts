@@ -1,15 +1,8 @@
 import { Request, Response } from "express";
 import { Config, Zone } from "../modules/riscModule";
-import { ProcessedZone, Node, BuildingsConfig, RoutesConfig, BuildingInterface, ConfigInterface, ProcessedBuilding, RouteInterface, ProcessedRoute, ZoneInterface, RiscLevel } from "../interfaces/interfaces";
+import { ProcessedZone, Node, BuildingInterface, ConfigInterface, ProcessedBuilding, RouteInterface, ProcessedRoute, ZoneInterface, RiscLevel } from "../interfaces/interfaces";
 import { checkTimeForBuilding } from './TimeController';
 import { getWeather } from "./weatherRoute";
-
-
-
-
-
-
-
 
 const joinBuildingAndRisc = async (config: ConfigInterface, buildings: BuildingInterface[]): Promise<ProcessedBuilding[]> => {
     try {
@@ -27,7 +20,6 @@ const joinBuildingAndRisc = async (config: ConfigInterface, buildings: BuildingI
         throw error;
     }
 };
-
 
 const joinRouteAndRisc = async (config: ConfigInterface, routes: RouteInterface[]): Promise<ProcessedRoute[]> => {
     try {
@@ -47,8 +39,6 @@ const joinRouteAndRisc = async (config: ConfigInterface, routes: RouteInterface[
         throw error;
     }
 };
-
-
 
 const joinZoneAndRisc = async (config: ConfigInterface, zones: ZoneInterface[]): Promise<ProcessedZone[]> => {
     try {
@@ -70,9 +60,6 @@ const joinZoneAndRisc = async (config: ConfigInterface, zones: ZoneInterface[]):
     }
 };
 
-
-
-
 /**
  * Determine if a point is inside a polygon using the ray-casting algorithm.
  * 
@@ -88,7 +75,6 @@ const joinZoneAndRisc = async (config: ConfigInterface, zones: ZoneInterface[]):
  * @param zoneCoords - The coordinates of the polygon's vertices.
  * @returns True if the point is inside the polygon, false otherwise.
  */
-
 function isPointInZone(pointCoords: Node, zoneCoords: Node[]): boolean {
     const { lat: y, lon: x } = pointCoords;
     let inside = false;
@@ -114,17 +100,6 @@ function isPointInZone(pointCoords: Node, zoneCoords: Node[]): boolean {
 
     return inside;
 }
-
-
-
-
-
-
-
-
-
-
-
 
 const getZonesWithRisc = async (req: Request, res: Response) => {
     const start = Date.now();
