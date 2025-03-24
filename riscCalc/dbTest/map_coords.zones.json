@@ -1,0 +1,86 @@
+[{
+  "_id": {
+    "$oid": "67df3b35c9f53b95353487b0"
+  },
+  "zoneId": "zone_1",
+  "geometry": [
+    {
+      "lat": 48.8566,
+      "lon": 2.3522
+    },
+    {
+      "lat": 48.8576,
+      "lon": 2.3532
+    }
+  ],
+  "bounding_box": [
+    {
+      "lat": 48.856,
+      "lon": 2.352
+    },
+    {
+      "lat": 48.858,
+      "lon": 2.354
+    }
+  ],
+  "tags": {
+    "landuse": "residential"
+  },
+  "buildings": [
+    {
+      "$oid": "67df3affc9f53b95353487a8"
+    },
+    {
+      "$oid": "67df3affc9f53b95353487a9"
+    }
+  ],
+  "routes": [
+    {
+      "$oid": "67df3b35c9f53b95353487ad"
+    },
+    {
+      "$oid": "67df3b35c9f53b95353487ae"
+    }
+  ],
+  "cross_walks": 2
+},
+{
+  "_id": {
+    "$oid": "67df3b35c9f53b95353487b1"
+  },
+  "zoneId": "zone_2",
+  "geometry": [
+    {
+      "lat": 48.8606,
+      "lon": 2.3525
+    },
+    {
+      "lat": 48.8616,
+      "lon": 2.3535
+    }
+  ],
+  "bounding_box": [
+    {
+      "lat": 48.86,
+      "lon": 2.352
+    },
+    {
+      "lat": 48.862,
+      "lon": 2.354
+    }
+  ],
+  "tags": {
+    "landuse": "commercial"
+  },
+  "buildings": [
+    {
+      "$oid": "67df3affc9f53b95353487a9"
+    }
+  ],
+  "routes": [
+    {
+      "$oid": "67df3b35c9f53b95353487ae"
+    }
+  ],
+  "cross_walks": 1
+}]

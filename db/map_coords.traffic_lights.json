@@ -2,7 +2,6 @@
   "_id": {
     "$oid": "67bdf3a3f08630b85beec1ee"
   },
-  "type": "traffic light",
   "id": 330726176,
   "lat": 33.6887018,
   "lon": -7.3793176
@@ -11,7 +10,6 @@
   "_id": {
     "$oid": "67bdf3a3f08630b85beec1ef"
   },
-  "type": "traffic light",
   "id": 428922840,
   "lat": 33.690796,
   "lon": -7.3952577
@@ -20,7 +18,6 @@
   "_id": {
     "$oid": "67bdf3a3f08630b85beec1f0"
   },
-  "type": "traffic light",
   "id": 428928506,
   "lat": 33.6906803,
   "lon": -7.3825081
@@ -29,7 +26,6 @@
   "_id": {
     "$oid": "67bdf3a3f08630b85beec1f1"
   },
-  "type": "traffic light",
   "id": 428929594,
   "lat": 33.6884647,
   "lon": -7.3849945
@@ -38,7 +34,6 @@
   "_id": {
     "$oid": "67bdf3a3f08630b85beec1f2"
   },
-  "type": "traffic light",
   "id": 428930154,
   "lat": 33.6962555,
   "lon": -7.3718513
@@ -47,7 +42,6 @@
   "_id": {
     "$oid": "67bdf3a3f08630b85beec1f3"
   },
-  "type": "traffic light",
   "id": 724159031,
   "lat": 33.686263,
   "lon": -7.3820025
@@ -56,7 +50,6 @@
   "_id": {
     "$oid": "67bdf3a3f08630b85beec1f4"
   },
-  "type": "traffic light",
   "id": 724159077,
   "lat": 33.6886332,
   "lon": -7.379158
@@ -65,7 +58,6 @@
   "_id": {
     "$oid": "67bdf3a3f08630b85beec1f5"
   },
-  "type": "traffic light",
   "id": 724159084,
   "lat": 33.6961327,
   "lon": -7.371739
@@ -74,7 +66,6 @@
   "_id": {
     "$oid": "67bdf3a3f08630b85beec1f6"
   },
-  "type": "traffic light",
   "id": 724170165,
   "lat": 33.688718,
   "lon": -7.3790735
@@ -83,7 +74,6 @@
   "_id": {
     "$oid": "67bdf3a3f08630b85beec1f7"
   },
-  "type": "traffic light",
   "id": 724170170,
   "lat": 33.6962622,
   "lon": -7.3716518
@@ -92,7 +82,6 @@
   "_id": {
     "$oid": "67bdf3a3f08630b85beec1f8"
   },
-  "type": "traffic light",
   "id": 724170238,
   "lat": 33.6887928,
   "lon": -7.3792398
@@ -101,7 +90,6 @@
   "_id": {
     "$oid": "67bdf3a3f08630b85beec1f9"
   },
-  "type": "traffic light",
   "id": 724170283,
   "lat": 33.6963775,
   "lon": -7.3717772
@@ -110,7 +98,6 @@
   "_id": {
     "$oid": "67bdf3a3f08630b85beec1fa"
   },
-  "type": "traffic light",
   "id": 728590731,
   "lat": 33.6924906,
   "lon": -7.3930116
@@ -119,7 +106,6 @@
   "_id": {
     "$oid": "67bdf3a3f08630b85beec1fb"
   },
-  "type": "traffic light",
   "id": 1696704595,
   "lat": 33.6967118,
   "lon": -7.3668936
@@ -128,7 +114,6 @@
   "_id": {
     "$oid": "67bdf3a3f08630b85beec1fc"
   },
-  "type": "traffic light",
   "id": 1974483899,
   "lat": 33.6908604,
   "lon": -7.3951689
@@ -137,7 +122,6 @@
   "_id": {
     "$oid": "67bdf3a3f08630b85beec1fd"
   },
-  "type": "traffic light",
   "id": {
     "$numberLong": "3283005197"
   },
@@ -148,7 +132,6 @@
   "_id": {
     "$oid": "67bdf3a3f08630b85beec1fe"
   },
-  "type": "traffic light",
   "id": {
     "$numberLong": "3936525848"
   },
@@ -159,7 +142,6 @@
   "_id": {
     "$oid": "67bdf3a3f08630b85beec1ff"
   },
-  "type": "traffic light",
   "id": {
     "$numberLong": "3936527158"
   },
@@ -170,7 +152,6 @@
   "_id": {
     "$oid": "67bdf3a3f08630b85beec200"
   },
-  "type": "traffic light",
   "id": {
     "$numberLong": "5636027005"
   },
@@ -181,7 +162,6 @@
   "_id": {
     "$oid": "67bdf3a3f08630b85beec201"
   },
-  "type": "traffic light",
   "id": {
     "$numberLong": "5636028021"
   },
@@ -192,7 +172,6 @@
   "_id": {
     "$oid": "67bdf3a3f08630b85beec202"
   },
-  "type": "traffic light",
   "id": {
     "$numberLong": "5636028022"
   },
@@ -203,7 +182,6 @@
   "_id": {
     "$oid": "67bdf3a3f08630b85beec203"
   },
-  "type": "traffic light",
   "id": {
     "$numberLong": "5637751789"
   },
@@ -214,7 +192,6 @@
   "_id": {
     "$oid": "67bdf3a3f08630b85beec204"
   },
-  "type": "traffic light",
   "id": {
     "$numberLong": "5637751791"
   },
@@ -225,7 +202,6 @@
   "_id": {
     "$oid": "67bdf3a3f08630b85beec205"
   },
-  "type": "traffic light",
   "id": {
     "$numberLong": "5637752224"
   },
@@ -236,7 +212,6 @@
   "_id": {
     "$oid": "67bdf3a3f08630b85beec206"
   },
-  "type": "traffic light",
   "id": {
     "$numberLong": "5637752225"
   },
@@ -247,7 +222,6 @@
   "_id": {
     "$oid": "67bdf3a3f08630b85beec207"
   },
-  "type": "traffic light",
   "id": {
     "$numberLong": "5638413041"
   },
@@ -258,7 +232,6 @@
   "_id": {
     "$oid": "67bdf3a3f08630b85beec208"
   },
-  "type": "traffic light",
   "id": {
     "$numberLong": "6830930105"
   },

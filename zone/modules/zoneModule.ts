@@ -1,24 +1,23 @@
 import mongoose from "mongoose";
-const zoneSchema = new mongoose.Schema(
-
-    {
+const zoneSchema = new mongoose.Schema
+    ({
         zoneId: { type: String, required: true },
-        geometry: {
-            type: [
-                {
-                    lat: { type: Number, required: true },
-                    lon: { type: Number, required: true },
-                }
-            ],
-            required: true
-        },
-        tags: {
-            landuse: { type: String },
-        },
-        buildings: [{ type: Number, required: true }],
-        routes: [{ type: Number, required: true }],
-        trafficLights: [{ type: Number, required: true }],
+        geometry: [{ lat: { type: Number, required: true }, lon: { type: Number, required: true } }],
+        bounding_box: [
 
-    }
-)
-export const zoneModule = mongoose.models.zones || mongoose.model("zones", zoneSchema);
+            {
+                lat: { type: Number, required: true },
+                lon: { type: Number, required: true },
+            }
+        ],
+
+
+        tags: {
+            landuse: { type: String, required: false },
+
+        },
+        buildings: [{ type: mongoose.Schema.Types.ObjectId, ref: "buildings", required: true }],
+        routes: [{ type: mongoose.Schema.Types.ObjectId, ref: "routes", required: true }],
+        cross_walks: { type: Number, required: true },
+    });
+export const zoneModule = mongoose.models.zones || mongoose.model("zone", zoneSchema);
