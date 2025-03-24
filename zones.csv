@@ -1,0 +1,6 @@
+zone       , riscP , riscC , description
+residential, faible, faible, Zone résidentielle
+industrial , faible, faible, Zone industrielle
+commercial , faible, faible, Zone commerciale
+natural    , none  , faible, Zone naturelle
+other      , faible, faible, Autre zone

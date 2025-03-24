@@ -1,0 +1,8 @@
+building        , riscP , riscC 
+school          , none  , moyen 
+university      , none  , faible
+driver_training , faible, faible
+taxi            , none  , faible
+hospital        , faible, faible
+marketplace     , faible, faible
+place_of_worship, none  , none 

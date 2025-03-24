@@ -1,6 +1,7 @@
 import { BuildingsTypes, RoutesTypes, ZonesTypes} from '../interfaces/interfaces';
 import dotenv  from 'dotenv';
 import axios from 'axios';
+import { Request, Response } from 'express';
 
 dotenv.config();
 
@@ -14,8 +15,19 @@ function time() {
     return time;
 }
 
+export const  ReadFile=(req:Request, res :Response) =>{
+    let lien = req.body.lien;
+    let fs = require('fs');
+    let data = fs.readFileSync(lien, 'utf8');
+    res.json(data);
+
+   // return data;
+}
+
+
 
 export const checkTimeForBuilding=(building: BuildingsTypes):  BuildingsTypes=> {
+
     switch (building.type) {
         case "school":
         case "university":
@@ -24,13 +36,13 @@ export const checkTimeForBuilding=(building: BuildingsTypes):  BuildingsTypes=> 
                 building.car+=10;
             }
             break;
-        case "bank":
-        case "dentist":
-        case "social_facility":
-        case "post_box":
-        case "bureau_de_change":
-        case "veterinary":
-            if(time()<9 || time()>17){
+        case "driver_training":
+            if(time()>=9 && time()<=12 || time()>=14 && time()<=18){
+                building.pedestrian-=3;
+                building.car-=3;
+            }
+        case "marketplace":
+            if(time()>=9 && time()<=22){
                 building.pedestrian-=3;
                 building.car-=3;
             }

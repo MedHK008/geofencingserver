@@ -1,0 +1,15 @@
+route        , riscP , riscC , description
+motorway     , elevée, faible, Voie rapide
+trunk        , faible, faible, Route principale nationale
+primary      , faible, faible, Route principale départementale
+secondary    , faible, faible, Route secondaire
+tertiary     , faible, faible, Route tertiaire
+unclassified , faible, faible, Route non classée
+living_street, none  , moyen , Zone de rencontre
+service      , faible, faible, Route d'accès à un bâtiment unique;site industriel;plage;camping; à l'intérieur d'un grand parking; une allée
+pedestrian   , none  , faible, Voie piétonne
+busway       , faible, elevée, Voie réservée aux bus
+footway      , none  , faible, Chemin piéton
+steps        , none  , elevée, Escalier
+sidewalk     , none  , faible, Trottoir
+crossing     , none  , faible, Passage piéton

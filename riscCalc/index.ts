@@ -7,6 +7,7 @@ import organizeDbRoute from './routers/organizeDbRoute';
 import mongoose from 'mongoose';
 import expressWs, { Application } from 'express-ws';
 import { WebSocket } from 'ws';
+import test from './routers/testRouter';
 
 
 env.config();
@@ -44,6 +45,7 @@ mongoose.set('strictQuery', true);
 connectToDB();
 app.use('/api/buildingRisc', zonesWithRisc);
 app.use('/api/organizeDB', organizeDbRoute);
+app.use('/api',test);
 app.listen(PORT_RISC, () => {
     console.log(`Server is running on port ${PORT_RISC}`);
     console.log(`http://localhost:${PORT_RISC}/api/buildingRisc`);
