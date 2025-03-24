@@ -7,8 +7,9 @@ import { getWeather } from "./weatherRoute";
 const joinBuildingAndRisc = async (config: ConfigInterface, buildings: BuildingInterface[]): Promise<ProcessedBuilding[]> => {
     try {
         return buildings.map(building => {
+            console.log(building)
             const ourConfig = config.buildings.find(b => b.type === building.type);
-
+            // console.log(ourConfig)
             return {
                 ...building,
                 pedestrian: ourConfig?.riscP || RiscLevel.NONE,
@@ -42,9 +43,9 @@ const joinRouteAndRisc = async (config: ConfigInterface, routes: RouteInterface[
 
 const joinZoneAndRisc = async (config: ConfigInterface, zones: ZoneInterface[]): Promise<ProcessedZone[]> => {
     try {
-
         return zones.map(zone => {
             const ourConfig = config.zones.find(z => z.type === zone.type);
+            console.log(ourConfig)
             return {
                 ...zone,
                 riscP: ourConfig?.riscP || RiscLevel.NONE,
@@ -114,11 +115,12 @@ const getZonesWithRisc = async (req: Request, res: Response) => {
                     .lean();
             })
         );
-
+        console.log(newZones[0].routes);
         let anotherzones: ProcessedZone[] = await joinZoneAndRisc(config[0], newZones)
         anotherzones = await Promise.all(anotherzones.map(async (zone) => {
             zone.car = { none: 0, faible: 0, moyenne: 0, eleve: 0 };
             zone.pedestrian = { none: 0, faible: 0, moyenne: 0, eleve: 0 };
+
             zone.buildings = await joinBuildingAndRisc(config[0], zone.buildings)
             zone.routes = await joinRouteAndRisc(config[0], zone.routes)
             zone.buildings = await Promise.all(
@@ -174,30 +176,30 @@ const getZonesWithRisc = async (req: Request, res: Response) => {
             else if (riscP > 0.75 && riscP <= 1) zone.riscP = RiscLevel.ELEVE
 
 
-            console.log(`
-                📍 Zone ID: ${zone.zoneId}
-                ----------------------------------------
-                🚧 Risque Collision (riscC): ${riscC.toFixed(2)}
-                   ➡️ Niveau: ${zone.riscC} ${zone.riscC === RiscLevel.NONE ? "✅ (Aucun)" :
-                    zone.riscC === RiscLevel.FAIBLE ? "🟢 (Faible)" :
-                        zone.riscC === RiscLevel.MOYENNE ? "🟠 (Moyen)" :
-                            zone.riscC === RiscLevel.ELEVE ? "🔴 (Élevé)" : ""}
+            // console.log(`
+            //     📍 Zone ID: ${zone.zoneId}
+            //     ----------------------------------------
+            //     🚧 Risque Collision (riscC): ${riscC.toFixed(2)}
+            //        ➡️ Niveau: ${zone.riscC} ${zone.riscC === RiscLevel.NONE ? "✅ (Aucun)" :
+            //         zone.riscC === RiscLevel.FAIBLE ? "🟢 (Faible)" :
+            //             zone.riscC === RiscLevel.MOYENNE ? "🟠 (Moyen)" :
+            //                 zone.riscC === RiscLevel.ELEVE ? "🔴 (Élevé)" : ""}
                 
-                🚶‍♂️ Risque Piétons (riscP): ${riscP.toFixed(2)}
-                   ➡️ Niveau: ${zone.riscP} ${zone.riscP === RiscLevel.NONE ? "✅ (Aucun)" :
-                    zone.riscP === RiscLevel.FAIBLE ? "🟢 (Faible)" :
-                        zone.riscP === RiscLevel.MOYENNE ? "🟠 (Moyen)" :
-                            zone.riscP === RiscLevel.ELEVE ? "🔴 (Élevé)" : ""}
-                ----------------------------------------
-                `);
+            //     🚶‍♂️ Risque Piétons (riscP): ${riscP.toFixed(2)}
+            //        ➡️ Niveau: ${zone.riscP} ${zone.riscP === RiscLevel.NONE ? "✅ (Aucun)" :
+            //         zone.riscP === RiscLevel.FAIBLE ? "🟢 (Faible)" :
+            //             zone.riscP === RiscLevel.MOYENNE ? "🟠 (Moyen)" :
+            //                 zone.riscP === RiscLevel.ELEVE ? "🔴 (Élevé)" : ""}
+            //     ----------------------------------------
+            //     `);
             return zone;
         }));
 
 
 
-        console.log(anotherzones)
+        // console.log(anotherzones)
         const end = Date.now() - start;
-        console.log(`Execution time: ${end}ms`);
+        // console.log(`Execution time: ${end}ms`);
 
         res.status(200).json({ success: true, anotherzones, end });
     } catch (error) {

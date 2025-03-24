@@ -13,8 +13,6 @@ const BuildingSchema = new mongoose.Schema
 
     });
 
-
-
 const RouteSchema = new mongoose.Schema
     ({
         id: { type: Number, required: true },
