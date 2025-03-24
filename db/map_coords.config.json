@@ -1,0 +1,251 @@
+[{
+  "_id": {
+    "$oid": "67df2890ceb4ca2d31ba438f"
+  },
+  "zones": [
+    {
+      "type": "residential",
+      "riscP": "faible",
+      "riscC": "faible",
+      "description": "Zone résidentielle"
+    },
+    {
+      "type": "industrial",
+      "riscP": "faible",
+      "riscC": "faible",
+      "description": "Zone industrielle"
+    },
+    {
+      "type": "commercial",
+      "riscP": "faible",
+      "riscC": "faible",
+      "description": "Zone commerciale"
+    },
+    {
+      "type": "natural",
+      "riscP": "none",
+      "riscC": "faible",
+      "description": "Zone naturelle"
+    },
+    {
+      "type": "other",
+      "riscP": "faible",
+      "riscC": "faible",
+      "description": "Autre zone"
+    }
+  ],
+  "buildings": [
+    {
+      "type": "school",
+      "riscP": "none",
+      "riscC": "moyen",
+      "description": "École maternelle;école primaire;collège;lycée"
+    },
+    {
+      "type": "university",
+      "riscP": "none",
+      "riscC": "faible",
+      "description": "Université;campus universitaire"
+    },
+    {
+      "type": "driver_training",
+      "riscP": "faible",
+      "riscC": "faible",
+      "description": "Lieu d’entraînement à la conduite"
+    },
+    {
+      "type": "taxi",
+      "riscP": "none",
+      "riscC": "faible",
+      "description": "Station de taxi"
+    },
+    {
+      "type": "hospital",
+      "riscP": "faible",
+      "riscC": "faible",
+      "description": "Hôpital"
+    },
+    {
+      "type": "marketplace",
+      "riscP": "faible",
+      "riscC": "faible",
+      "description": "Marché"
+    },
+    {
+      "type": "place_of_worship",
+      "riscP": "none",
+      "riscC": "none",
+      "description": "Édifice religieux"
+    }
+  ],
+  "routes": [
+    {
+      "type": "motorway",
+      "riscP": "elevée",
+      "riscC": "faible",
+      "description": "Voie rapide"
+    },
+    {
+      "type": "trunk",
+      "riscP": "faible",
+      "riscC": "faible",
+      "description": "Route principale nationale"
+    },
+    {
+      "type": "primary",
+      "riscP": "faible",
+      "riscC": "faible",
+      "description": "Route principale départementale"
+    },
+    {
+      "type": "secondary",
+      "riscP": "faible",
+      "riscC": "faible",
+      "description": "Route secondaire"
+    },
+    {
+      "type": "tertiary",
+      "riscP": "faible",
+      "riscC": "faible",
+      "description": "Route tertiaire"
+    },
+    {
+      "type": "unclassified",
+      "riscP": "faible",
+      "riscC": "faible",
+      "description": "Route non classée"
+    },
+    {
+      "type": "living_street",
+      "riscP": "none",
+      "riscC": "moyen",
+      "description": "Zone de rencontre"
+    },
+    {
+      "type": "service",
+      "riscP": "faible",
+      "riscC": "faible",
+      "description": "Route d'accès à un bâtiment unique;site industriel;plage;camping; à l'intérieur d'un grand parking; une allée"
+    },
+    {
+      "type": "pedestrian",
+      "riscP": "none",
+      "riscC": "faible",
+      "description": "Voie piétonne"
+    },
+    {
+      "type": "busway",
+      "riscP": "faible",
+      "riscC": "elevée",
+      "description": "Voie réservée aux bus"
+    },
+    {
+      "type": "footway",
+      "riscP": "none",
+      "riscC": "faible",
+      "description": "Chemin piéton"
+    },
+    {
+      "type": "steps",
+      "riscP": "none",
+      "riscC": "elevée",
+      "description": "Escalier"
+    },
+    {
+      "type": "sidewalk",
+      "riscP": "none",
+      "riscC": "faible",
+      "description": "Trottoir"
+    },
+    {
+      "type": "crossing",
+      "riscP": "none",
+      "riscC": "faible",
+      "description": "Passage piéton"
+    }
+  ],
+  "building_mappings": [
+    {
+      "_id": {
+        "$oid": "67e13e887ff05fe1dda66ae5"
+      },
+      "original_type": "school",
+      "mapped_type": "school"
+    },
+    {
+      "_id": {
+        "$oid": "67e13e887ff05fe1dda66ae6"
+      },
+      "original_type": "yes",
+      "mapped_type": "ignore"
+    },
+    {
+      "_id": {
+        "$oid": "67e13e887ff05fe1dda66ae7"
+      },
+      "original_type": "place_of_worship",
+      "mapped_type": "place_of_worship"
+    },
+    {
+      "original_type": "administrative",
+      "mapped_type": "hospital",
+      "_id": {
+        "$oid": "67e13e887ff05fe1dda66af3"
+      }
+    },
+    {
+      "original_type": "bar",
+      "mapped_type": "school",
+      "_id": {
+        "$oid": "67e13f95d2441ffd14344386"
+      }
+    }
+  ],
+  "route_mappings": [
+    {
+      "original_type": "footway",
+      "mapped_type": "living_street"
+    },
+    {
+      "original_type": "residential",
+      "mapped_type": "living_street"
+    },
+    {
+      "original_type": "secondary",
+      "mapped_type": "service"
+    },
+    {
+      "original_type": "service",
+      "mapped_type": "steps"
+    },
+    {
+      "original_type": "tertiary",
+      "mapped_type": "steps"
+    },
+    {
+      "original_type": "tertiary_link",
+      "mapped_type": "tertiary"
+    },
+    {
+      "original_type": "unclassified",
+      "mapped_type": "unclassified"
+    },
+    {
+      "original_type": "primary",
+      "mapped_type": "primary"
+    },
+    {
+      "original_type": "steps",
+      "mapped_type": "steps"
+    },
+    {
+      "original_type": "pedestrian",
+      "mapped_type": "footway"
+    },
+    {
+      "original_type": "track",
+      "mapped_type": "trunk"
+    }
+  ],
+  "__v": 2
+}]
