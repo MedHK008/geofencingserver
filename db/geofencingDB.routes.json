@@ -1034,7 +1034,7 @@
     }
   ],
   "tags": {
-    "highway": "motorway_link",
+    "highway": "motorway",
     "lanes": "1",
     "maxspeed": "60",
     "oneway": "yes",
@@ -9763,7 +9763,7 @@
     }
   ],
   "tags": {
-    "highway": "secondary_link",
+    "highway": "secondary",
     "lanes": "2",
     "oneway": "yes",
     "source": "Yahoo",
@@ -15014,7 +15014,7 @@
     }
   ],
   "tags": {
-    "highway": "secondary_link",
+    "highway": "secondary",
     "lanes": "2",
     "oneway": "yes",
     "source": "Yahoo",
@@ -24687,7 +24687,7 @@
     "destination:lang:ar": "شرق المحمدية;بنسليمان;مطار بنسليمان",
     "destination:lang:fr": "Mohammédia Est;Ben Slimane;Aéroport de Ben Slimane",
     "destination:ref": "R313",
-    "highway": "motorway_link",
+    "highway": "motorway",
     "junction:ref": "148",
     "lanes": "1",
     "oneway": "yes",
@@ -24825,7 +24825,7 @@
     "destination": "Casablanca;الدارالبيضاء",
     "destination:lang:ar": "الدارالبيضاء",
     "destination:lang:fr": "Casablanca",
-    "highway": "motorway_link",
+    "highway": "motorway",
     "lanes": "1",
     "maxspeed": "60",
     "oneway": "yes",
@@ -25732,7 +25732,7 @@
     }
   ],
   "tags": {
-    "highway": "motorway_link",
+    "highway": "motorway",
     "lanes": "2",
     "maxspeed": "60",
     "oneway": "yes",
@@ -25760,7 +25760,7 @@
   ],
   "tags": {
     "destination": "Mohammédia Ouest",
-    "highway": "motorway_link",
+    "highway": "motorway",
     "lanes": "2",
     "oneway": "yes",
     "surface": "asphalt"
@@ -29702,7 +29702,7 @@
     }
   ],
   "tags": {
-    "highway": "secondary_link",
+    "highway": "secondary",
     "lanes": "1",
     "oneway": "yes",
     "surface": "asphalt"
@@ -30666,7 +30666,7 @@
     }
   ],
   "tags": {
-    "highway": "secondary_link",
+    "highway": "secondary",
     "lanes": "1",
     "oneway": "yes",
     "surface": "asphalt"
@@ -30700,7 +30700,7 @@
     }
   ],
   "tags": {
-    "highway": "secondary_link",
+    "highway": "secondary",
     "lanes": "1",
     "oneway": "yes",
     "surface": "asphalt"
@@ -30734,7 +30734,7 @@
     }
   ],
   "tags": {
-    "highway": "secondary_link",
+    "highway": "secondary",
     "lanes": "1",
     "oneway": "yes",
     "surface": "asphalt"
@@ -30768,7 +30768,7 @@
     }
   ],
   "tags": {
-    "highway": "secondary_link",
+    "highway": "secondary",
     "lanes": "1",
     "oneway": "yes",
     "surface": "asphalt"
@@ -35639,7 +35639,7 @@
     }
   ],
   "tags": {
-    "highway": "path",
+    "highway": "footway",
     "lanes": "2",
     "surface": "asphalt"
   }
@@ -36934,7 +36934,7 @@
     }
   ],
   "tags": {
-    "highway": "path",
+    "highway": "footway",
     "lanes": "2",
     "surface": "asphalt"
   }
@@ -38652,7 +38652,7 @@
     "destination:lang:ar": "وسط المحمدية",
     "destination:lang:fr": "Mohammédia Centre",
     "destination:ref": "P3313",
-    "highway": "motorway_link",
+    "highway": "motorway",
     "junction:ref": "152",
     "lanes": "1",
     "oneway": "yes",
@@ -39760,7 +39760,7 @@
     }
   ],
   "tags": {
-    "highway": "path",
+    "highway": "footway",
     "old_ref": "P3306",
     "ref": "RP3306"
   }
@@ -40835,7 +40835,7 @@
   ],
   "tags": {
     "destination:ref": "RR322",
-    "highway": "primary_link",
+    "highway": "primary",
     "lanes": "2",
     "oneway": "yes",
     "surface": "asphalt"
@@ -41049,7 +41049,7 @@
     }
   ],
   "tags": {
-    "highway": "secondary_link",
+    "highway": "secondary",
     "lanes": "1",
     "oneway": "yes",
     "surface": "asphalt"
@@ -42786,7 +42786,7 @@
   ],
   "tags": {
     "destination:ref": "RR323",
-    "highway": "primary_link",
+    "highway": "primary",
     "lanes": "2",
     "maxspeed": "60",
     "oneway": "yes",
@@ -43191,7 +43191,7 @@
     }
   ],
   "tags": {
-    "highway": "path",
+    "highway": "footway",
     "lanes": "2",
     "surface": "asphalt"
   }
@@ -45650,7 +45650,7 @@
     }
   ],
   "tags": {
-    "highway": "secondary_link",
+    "highway": "secondary",
     "lanes": "1",
     "oneway": "yes",
     "surface": "asphalt"
@@ -47184,7 +47184,7 @@
     }
   ],
   "tags": {
-    "highway": "trunk_link",
+    "highway": "trunk",
     "lanes": "2",
     "maxspeed": "60",
     "oneway": "yes",
@@ -47262,7 +47262,7 @@
     "destination": "Rabat;الرباط",
     "destination:lang:ar": "الرباط",
     "destination:lang:fr": "Rabat",
-    "highway": "trunk_link",
+    "highway": "trunk",
     "lanes": "2",
     "maxspeed": "60",
     "oneway": "yes",
@@ -47710,7 +47710,7 @@
     }
   ],
   "tags": {
-    "highway": "secondary_link",
+    "highway": "secondary",
     "lanes": "1",
     "oneway": "yes",
     "surface": "asphalt"
@@ -49416,7 +49416,7 @@
     }
   ],
   "tags": {
-    "highway": "path"
+    "highway": "footway"
   }
 },
 {
@@ -49750,7 +49750,7 @@
     }
   ],
   "tags": {
-    "highway": "path"
+    "highway": "footway"
   }
 },
 {
@@ -54603,7 +54603,7 @@
     }
   ],
   "tags": {
-    "highway": "path"
+    "highway": "footway"
   }
 },
 {
@@ -55303,7 +55303,7 @@
     }
   ],
   "tags": {
-    "highway": "secondary_link",
+    "highway": "secondary",
     "lanes": "2",
     "oneway": "yes",
     "source": "Yahoo",
@@ -81554,7 +81554,7 @@
     }
   ],
   "tags": {
-    "highway": "path"
+    "highway": "footway"
   }
 },
 {
@@ -81613,7 +81613,7 @@
     }
   ],
   "tags": {
-    "highway": "path"
+    "highway": "footway"
   }
 },
 {
@@ -81644,7 +81644,7 @@
     }
   ],
   "tags": {
-    "highway": "path"
+    "highway": "footway"
   }
 },
 {
@@ -81699,7 +81699,7 @@
     }
   ],
   "tags": {
-    "highway": "path"
+    "highway": "footway"
   }
 },
 {
@@ -81758,7 +81758,7 @@
     }
   ],
   "tags": {
-    "highway": "path"
+    "highway": "footway"
   }
 },
 {
@@ -81916,7 +81916,7 @@
     }
   ],
   "tags": {
-    "highway": "path"
+    "highway": "footway"
   }
 },
 {
@@ -81943,7 +81943,7 @@
     }
   ],
   "tags": {
-    "highway": "path"
+    "highway": "footway"
   }
 },
 {
@@ -82058,7 +82058,7 @@
     }
   ],
   "tags": {
-    "highway": "path"
+    "highway": "footway"
   }
 },
 {
@@ -82113,7 +82113,7 @@
     }
   ],
   "tags": {
-    "highway": "path"
+    "highway": "footway"
   }
 },
 {
@@ -82304,7 +82304,7 @@
     }
   ],
   "tags": {
-    "highway": "path"
+    "highway": "footway"
   }
 },
 {
@@ -82431,7 +82431,7 @@
     }
   ],
   "tags": {
-    "highway": "path"
+    "highway": "footway"
   }
 },
 {
@@ -82486,7 +82486,7 @@
     }
   ],
   "tags": {
-    "highway": "path"
+    "highway": "footway"
   }
 },
 {
@@ -82581,7 +82581,7 @@
     }
   ],
   "tags": {
-    "highway": "path"
+    "highway": "footway"
   }
 },
 {
@@ -82720,7 +82720,7 @@
     }
   ],
   "tags": {
-    "highway": "path"
+    "highway": "footway"
   }
 },
 {
@@ -82875,7 +82875,7 @@
     }
   ],
   "tags": {
-    "highway": "path"
+    "highway": "footway"
   }
 },
 {
@@ -88784,7 +88784,7 @@
     }
   ],
   "tags": {
-    "highway": "path",
+    "highway": "footway",
     "lanes": "2",
     "name": "Rue F",
     "surface": "asphalt"
@@ -90263,7 +90263,7 @@
     "destination:lang:ar": "شرق المحمدية;بنسليمان;مطار بنسليمان",
     "destination:lang:fr": "Mohammédia Est;Benslimane;Aéroport Benslimane",
     "destination:ref": "R313",
-    "highway": "motorway_link",
+    "highway": "motorway",
     "junction:ref": "148",
     "maxspeed": "60",
     "oneway": "yes"
@@ -112013,7 +112013,7 @@
     }
   ],
   "tags": {
-    "highway": "path",
+    "highway": "footway",
     "lanes": "2",
     "surface": "asphalt"
   }
@@ -112034,7 +112034,7 @@
     }
   ],
   "tags": {
-    "highway": "path",
+    "highway": "footway",
     "lanes": "2",
     "surface": "asphalt"
   }
@@ -116744,7 +116744,7 @@
     }
   ],
   "tags": {
-    "highway": "secondary_link",
+    "highway": "secondary",
     "lanes": "2",
     "surface": "asphalt"
   }
@@ -118394,7 +118394,7 @@
     }
   ],
   "tags": {
-    "highway": "primary_link",
+    "highway": "primary",
     "lanes": "2",
     "surface": "asphalt"
   }
@@ -120161,7 +120161,7 @@
     }
   ],
   "tags": {
-    "highway": "trunk_link",
+    "highway": "trunk",
     "lanes": "1",
     "oneway": "yes",
     "surface": "asphalt"
@@ -121479,7 +121479,7 @@
     }
   ],
   "tags": {
-    "highway": "primary_link",
+    "highway": "primary",
     "lanes": "1",
     "oneway": "yes",
     "source": "Yahoo",
@@ -125713,7 +125713,7 @@
     "destination:lang:ar": "وسط المحمدية",
     "destination:lang:fr": "Mohammédia Centre",
     "destination:ref": "P3313",
-    "highway": "motorway_link",
+    "highway": "motorway",
     "junction:ref": "152",
     "maxspeed": "60",
     "oneway": "yes",
@@ -125917,7 +125917,7 @@
     }
   ],
   "tags": {
-    "highway": "motorway_link",
+    "highway": "motorway",
     "maxspeed": "60",
     "oneway": "yes",
     "surface": "asphalt"
@@ -127652,7 +127652,7 @@
     }
   ],
   "tags": {
-    "highway": "motorway_link",
+    "highway": "motorway",
     "maxspeed": "60",
     "oneway": "yes",
     "surface": "asphalt"
@@ -127856,7 +127856,7 @@
   ],
   "tags": {
     "bridge": "yes",
-    "highway": "path",
+    "highway": "footway",
     "layer": "1"
   }
 },
@@ -128107,7 +128107,7 @@
     }
   ],
   "tags": {
-    "highway": "motorway_link",
+    "highway": "motorway",
     "maxspeed": "60",
     "oneway": "yes",
     "surface": "asphalt"
@@ -129236,7 +129236,7 @@
     }
   ],
   "tags": {
-    "highway": "motorway_link",
+    "highway": "motorway",
     "lanes": "1",
     "maxspeed": "60",
     "oneway": "yes",
@@ -134552,7 +134552,7 @@
     }
   ],
   "tags": {
-    "highway": "trunk_link"
+    "highway": "trunk"
   }
 },
 {
@@ -136239,7 +136239,7 @@
     }
   ],
   "tags": {
-    "highway": "trunk_link"
+    "highway": "trunk"
   }
 },
 {
@@ -136258,7 +136258,7 @@
     }
   ],
   "tags": {
-    "highway": "trunk_link"
+    "highway": "trunk"
   }
 },
 {
@@ -136601,7 +136601,7 @@
     }
   ],
   "tags": {
-    "highway": "secondary_link"
+    "highway": "secondary"
   }
 },
 {
@@ -140653,7 +140653,7 @@
     }
   ],
   "tags": {
-    "highway": "primary_link"
+    "highway": "primary"
   }
 },
 {
@@ -140680,7 +140680,7 @@
     }
   ],
   "tags": {
-    "highway": "path",
+    "highway": "footway",
     "lanes": "2",
     "surface": "asphalt"
   }
@@ -140965,7 +140965,7 @@
     }
   ],
   "tags": {
-    "highway": "path"
+    "highway": "footway"
   }
 },
 {
@@ -141282,7 +141282,7 @@
     }
   ],
   "tags": {
-    "highway": "path"
+    "highway": "footway"
   }
 },
 {
@@ -141529,7 +141529,7 @@
     }
   ],
   "tags": {
-    "highway": "path"
+    "highway": "footway"
   }
 },
 {
@@ -157844,7 +157844,7 @@
     }
   ],
   "tags": {
-    "highway": "secondary_link"
+    "highway": "secondary"
   }
 },
 {
@@ -158826,7 +158826,7 @@
     }
   ],
   "tags": {
-    "highway": "trunk_link"
+    "highway": "trunk"
   }
 },
 {
@@ -158845,7 +158845,7 @@
     }
   ],
   "tags": {
-    "highway": "trunk_link"
+    "highway": "trunk"
   }
 },
 {
@@ -158864,7 +158864,7 @@
     }
   ],
   "tags": {
-    "highway": "trunk_link"
+    "highway": "trunk"
   }
 },
 {
@@ -161834,7 +161834,7 @@
     }
   ],
   "tags": {
-    "highway": "primary_link"
+    "highway": "primary"
   }
 },
 {
@@ -164652,7 +164652,7 @@
     }
   ],
   "tags": {
-    "highway": "primary_link"
+    "highway": "primary"
   }
 },
 {
@@ -167278,7 +167278,7 @@
     }
   ],
   "tags": {
-    "highway": "path"
+    "highway": "footway"
   }
 },
 {
@@ -167317,7 +167317,7 @@
     }
   ],
   "tags": {
-    "highway": "path"
+    "highway": "footway"
   }
 },
 {
@@ -168403,7 +168403,7 @@
     }
   ],
   "tags": {
-    "highway": "path"
+    "highway": "footway"
   }
 },
 {
@@ -171212,7 +171212,7 @@
     }
   ],
   "tags": {
-    "highway": "motorway_link",
+    "highway": "motorway",
     "oneway": "yes"
   }
 },
@@ -171248,7 +171248,7 @@
     }
   ],
   "tags": {
-    "highway": "motorway_link",
+    "highway": "motorway",
     "oneway": "yes"
   }
 },
@@ -175335,7 +175335,7 @@
     }
   ],
   "tags": {
-    "highway": "path"
+    "highway": "footway"
   }
 },
 {
@@ -175358,7 +175358,7 @@
     }
   ],
   "tags": {
-    "highway": "path"
+    "highway": "footway"
   }
 },
 {
@@ -175385,7 +175385,7 @@
     }
   ],
   "tags": {
-    "highway": "path"
+    "highway": "footway"
   }
 },
 {
@@ -176790,7 +176790,7 @@
     }
   ],
   "tags": {
-    "highway": "secondary_link"
+    "highway": "secondary"
   }
 },
 {
@@ -176949,7 +176949,7 @@
     }
   ],
   "tags": {
-    "highway": "secondary_link",
+    "highway": "secondary",
     "oneway": "yes"
   }
 },
@@ -177283,7 +177283,7 @@
     }
   ],
   "tags": {
-    "highway": "motorway_link",
+    "highway": "motorway",
     "oneway": "yes"
   }
 },
@@ -177323,7 +177323,7 @@
     }
   ],
   "tags": {
-    "highway": "trunk_link",
+    "highway": "trunk",
     "oneway": "yes"
   }
 },
@@ -179539,7 +179539,7 @@
     }
   ],
   "tags": {
-    "highway": "trunk_link"
+    "highway": "trunk"
   }
 },
 {
@@ -183742,7 +183742,7 @@
     }
   ],
   "tags": {
-    "highway": "secondary_link",
+    "highway": "secondary",
     "oneway": "yes"
   }
 },
@@ -188475,7 +188475,7 @@
   ],
   "tags": {
     "destination": "Mohammédia Ouest",
-    "highway": "motorway_link",
+    "highway": "motorway",
     "lanes": "2",
     "oneway": "yes",
     "surface": "asphalt"
@@ -189763,7 +189763,7 @@
     }
   ],
   "tags": {
-    "highway": "path"
+    "highway": "footway"
   }
 },
 {
@@ -189783,7 +189783,7 @@
   ],
   "tags": {
     "bridge": "yes",
-    "highway": "path",
+    "highway": "footway",
     "layer": "1"
   }
 },
@@ -189827,7 +189827,7 @@
     }
   ],
   "tags": {
-    "highway": "trunk_link",
+    "highway": "trunk",
     "oneway": "yes"
   }
 },
@@ -190208,7 +190208,7 @@
   ],
   "tags": {
     "construction": "residential",
-    "highway": "construction"
+    "highway": "unclassified"
   }
 },
 {
@@ -193341,7 +193341,7 @@
     }
   ],
   "tags": {
-    "highway": "primary_link"
+    "highway": "primary"
   }
 },
 {
@@ -194406,7 +194406,7 @@
     }
   ],
   "tags": {
-    "highway": "primary_link",
+    "highway": "primary",
     "oneway": "yes"
   }
 },
@@ -196843,7 +196843,7 @@
     }
   ],
   "tags": {
-    "highway": "path"
+    "highway": "footway"
   }
 },
 {
@@ -196886,7 +196886,7 @@
     }
   ],
   "tags": {
-    "highway": "path"
+    "highway": "footway"
   }
 },
 {
@@ -196960,7 +196960,7 @@
     }
   ],
   "tags": {
-    "highway": "path"
+    "highway": "footway"
   }
 },
 {
@@ -198496,7 +198496,7 @@
   "tags": {
     "bridge": "yes",
     "construction": "primary",
-    "highway": "construction",
+    "highway": "unclassified",
     "layer": "1",
     "oneway": "yes"
   }
@@ -198522,7 +198522,7 @@
   ],
   "tags": {
     "construction": "primary",
-    "highway": "construction",
+    "highway": "unclassified",
     "oneway": "yes"
   }
 },
@@ -198547,7 +198547,7 @@
   ],
   "tags": {
     "construction": "primary",
-    "highway": "construction",
+    "highway": "unclassified",
     "oneway": "yes"
   }
 },
@@ -198569,7 +198569,7 @@
   "tags": {
     "bridge": "yes",
     "construction": "primary",
-    "highway": "construction",
+    "highway": "unclassified",
     "layer": "1",
     "oneway": "yes"
   }
@@ -198591,7 +198591,7 @@
   ],
   "tags": {
     "construction": "primary",
-    "highway": "construction",
+    "highway": "unclassified",
     "oneway": "yes"
   }
 },
@@ -198612,7 +198612,7 @@
   ],
   "tags": {
     "construction": "primary",
-    "highway": "construction",
+    "highway": "unclassified",
     "oneway": "yes"
   }
 },

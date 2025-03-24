@@ -199,53 +199,156 @@
       "_id": {
         "$oid": "67e13f95d2441ffd14344386"
       }
+    },
+    {
+      "original_type": "bus_station",
+      "mapped_type": "taxi",
+      "_id": {
+        "$oid": "67e15fbd7d80301a1424274f"
+      }
+    },
+    {
+      "original_type": "clinic",
+      "mapped_type": "hospital",
+      "_id": {
+        "$oid": "67e15ff37d80301a14243136"
+      }
+    },
+    {
+      "original_type": "dentist",
+      "mapped_type": "hospital",
+      "_id": {
+        "$oid": "67e160127d80301a14243167"
+      }
+    },
+    {
+      "original_type": "pharmacy",
+      "mapped_type": "hospital",
+      "_id": {
+        "$oid": "67e1603b7d80301a142431a2"
+      }
     }
   ],
   "route_mappings": [
     {
+      "_id": {
+        "$oid": "67e160537d80301a142431d3"
+      },
       "original_type": "footway",
       "mapped_type": "living_street"
     },
     {
+      "_id": {
+        "$oid": "67e160537d80301a142431d4"
+      },
       "original_type": "residential",
       "mapped_type": "living_street"
     },
     {
+      "_id": {
+        "$oid": "67e160537d80301a142431d5"
+      },
       "original_type": "secondary",
       "mapped_type": "service"
     },
     {
+      "_id": {
+        "$oid": "67e160537d80301a142431d6"
+      },
       "original_type": "service",
       "mapped_type": "steps"
     },
     {
+      "_id": {
+        "$oid": "67e160537d80301a142431d7"
+      },
       "original_type": "tertiary",
       "mapped_type": "steps"
     },
     {
+      "_id": {
+        "$oid": "67e160537d80301a142431d8"
+      },
       "original_type": "tertiary_link",
       "mapped_type": "tertiary"
     },
     {
+      "_id": {
+        "$oid": "67e160537d80301a142431d9"
+      },
       "original_type": "unclassified",
       "mapped_type": "unclassified"
     },
     {
+      "_id": {
+        "$oid": "67e160537d80301a142431da"
+      },
       "original_type": "primary",
       "mapped_type": "primary"
     },
     {
+      "_id": {
+        "$oid": "67e160537d80301a142431db"
+      },
       "original_type": "steps",
       "mapped_type": "steps"
     },
     {
+      "_id": {
+        "$oid": "67e160537d80301a142431dc"
+      },
       "original_type": "pedestrian",
       "mapped_type": "footway"
     },
     {
+      "_id": {
+        "$oid": "67e160537d80301a142431dd"
+      },
       "original_type": "track",
       "mapped_type": "trunk"
+    },
+    {
+      "original_type": "construction",
+      "mapped_type": "unclassified",
+      "_id": {
+        "$oid": "67e160537d80301a142431de"
+      }
+    },
+    {
+      "original_type": "motorway_link",
+      "mapped_type": "motorway",
+      "_id": {
+        "$oid": "67e160567d80301a14243211"
+      }
+    },
+    {
+      "original_type": "path",
+      "mapped_type": "footway",
+      "_id": {
+        "$oid": "67e1605a7d80301a14243245"
+      }
+    },
+    {
+      "original_type": "primary_link",
+      "mapped_type": "primary",
+      "_id": {
+        "$oid": "67e1605c7d80301a1424327a"
+      }
+    },
+    {
+      "original_type": "secondary_link",
+      "mapped_type": "secondary",
+      "_id": {
+        "$oid": "67e1605e7d80301a142432b0"
+      }
+    },
+    {
+      "original_type": "trunk_link",
+      "mapped_type": "trunk",
+      "_id": {
+        "$oid": "67e160637d80301a142432e7"
+      }
     }
   ],
-  "__v": 2
+  "__v": 12
 }]
