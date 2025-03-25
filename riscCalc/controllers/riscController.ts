@@ -3,13 +3,14 @@ import { Config, Zone } from "../modules/riscModule";
 import { ProcessedZone, Node, BuildingInterface, ConfigInterface, ProcessedBuilding, RouteInterface, ProcessedRoute, ZoneInterface, RiscLevel } from "../interfaces/interfaces";
 import { checkTimeForBuilding } from './TimeController';
 import { getWeather } from "./weatherRoute";
+import { convertZoneSchemaToInterface } from "./SchemasToIntefaces";
+
+
 
 const joinBuildingAndRisc = async (config: ConfigInterface, buildings: BuildingInterface[]): Promise<ProcessedBuilding[]> => {
     try {
         return buildings.map(building => {
-            console.log(building)
             const ourConfig = config.buildings.find(b => b.type === building.type);
-            // console.log(ourConfig)
             return {
                 ...building,
                 pedestrian: ourConfig?.riscP || RiscLevel.NONE,
@@ -25,9 +26,10 @@ const joinBuildingAndRisc = async (config: ConfigInterface, buildings: BuildingI
 const joinRouteAndRisc = async (config: ConfigInterface, routes: RouteInterface[]): Promise<ProcessedRoute[]> => {
     try {
 
-
         return routes.map(route => {
+
             const ourConfig = config.routes.find(r => r.type === route.type);
+
 
             return {
                 ...route,
@@ -45,7 +47,6 @@ const joinZoneAndRisc = async (config: ConfigInterface, zones: ZoneInterface[]):
     try {
         return zones.map(zone => {
             const ourConfig = config.zones.find(z => z.type === zone.type);
-            console.log(ourConfig)
             return {
                 ...zone,
                 riscP: ourConfig?.riscP || RiscLevel.NONE,
@@ -105,9 +106,10 @@ function isPointInZone(pointCoords: Node, zoneCoords: Node[]): boolean {
 const getZonesWithRisc = async (req: Request, res: Response) => {
     const start = Date.now();
     try {
+
         let zones: ZoneInterface[] = req.body.zones
         const config: ConfigInterface[] = await Config.find().lean();
-        const newZones = await Promise.all(
+        const newZones  = await Promise.all(
             zones.map(async (zone) => {
                 return await Zone.findOne({ zoneId: zone.zoneId })
                     .populate('buildings')
@@ -115,8 +117,11 @@ const getZonesWithRisc = async (req: Request, res: Response) => {
                     .lean();
             })
         );
-        console.log(newZones[0].routes);
-        let anotherzones: ProcessedZone[] = await joinZoneAndRisc(config[0], newZones)
+        let anotherZ :ZoneInterface[] = newZones.map(z=>{
+            return convertZoneSchemaToInterface(z)
+        })
+        
+        let anotherzones: ProcessedZone[] = await joinZoneAndRisc(config[0], anotherZ)
         anotherzones = await Promise.all(anotherzones.map(async (zone) => {
             zone.car = { none: 0, faible: 0, moyenne: 0, eleve: 0 };
             zone.pedestrian = { none: 0, faible: 0, moyenne: 0, eleve: 0 };
@@ -176,22 +181,22 @@ const getZonesWithRisc = async (req: Request, res: Response) => {
             else if (riscP > 0.75 && riscP <= 1) zone.riscP = RiscLevel.ELEVE
 
 
-            // console.log(`
-            //     📍 Zone ID: ${zone.zoneId}
-            //     ----------------------------------------
-            //     🚧 Risque Collision (riscC): ${riscC.toFixed(2)}
-            //        ➡️ Niveau: ${zone.riscC} ${zone.riscC === RiscLevel.NONE ? "✅ (Aucun)" :
-            //         zone.riscC === RiscLevel.FAIBLE ? "🟢 (Faible)" :
-            //             zone.riscC === RiscLevel.MOYENNE ? "🟠 (Moyen)" :
-            //                 zone.riscC === RiscLevel.ELEVE ? "🔴 (Élevé)" : ""}
+            console.log(`
+                📍 Zone ID: ${zone.zoneId}
+                ----------------------------------------
+                🚧 Risque Collision (riscC): ${riscC.toFixed(2)}
+                   ➡️ Niveau: ${zone.riscC} ${zone.riscC === RiscLevel.NONE ? "✅ (Aucun)" :
+                    zone.riscC === RiscLevel.FAIBLE ? "🟢 (Faible)" :
+                        zone.riscC === RiscLevel.MOYENNE ? "🟠 (Moyen)" :
+                            zone.riscC === RiscLevel.ELEVE ? "🔴 (Élevé)" : ""}
                 
-            //     🚶‍♂️ Risque Piétons (riscP): ${riscP.toFixed(2)}
-            //        ➡️ Niveau: ${zone.riscP} ${zone.riscP === RiscLevel.NONE ? "✅ (Aucun)" :
-            //         zone.riscP === RiscLevel.FAIBLE ? "🟢 (Faible)" :
-            //             zone.riscP === RiscLevel.MOYENNE ? "🟠 (Moyen)" :
-            //                 zone.riscP === RiscLevel.ELEVE ? "🔴 (Élevé)" : ""}
-            //     ----------------------------------------
-            //     `);
+                🚶‍♂️ Risque Piétons (riscP): ${riscP.toFixed(2)}
+                   ➡️ Niveau: ${zone.riscP} ${zone.riscP === RiscLevel.NONE ? "✅ (Aucun)" :
+                    zone.riscP === RiscLevel.FAIBLE ? "🟢 (Faible)" :
+                        zone.riscP === RiscLevel.MOYENNE ? "🟠 (Moyen)" :
+                            zone.riscP === RiscLevel.ELEVE ? "🔴 (Élevé)" : ""}
+                ----------------------------------------
+                `);
             return zone;
         }));
 
