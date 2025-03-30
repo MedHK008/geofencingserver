@@ -7,7 +7,7 @@ router.post('/zone-notification', async (req: Request, res: Response) => {
   try {
 	await generateZoneNotification(req, res);
   } catch (error) {
-	res.status(500).send(error.message);
+	res.status(500).send(error);
   }
 });
 

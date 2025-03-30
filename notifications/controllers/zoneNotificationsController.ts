@@ -1,16 +1,12 @@
 import { Request, Response } from 'express';
-import OpenAI from 'openai';
+import axios from 'axios';
 import dotenv from 'dotenv';
 
-dotenv.config(); 
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+dotenv.config();
 
 interface ZoneDetails {
   type: string;
-  currentRisk: number;
+  currentRisk: string;
   status: 'entering' | 'exiting';
   userContext?: {
     name?: string;
@@ -21,33 +17,44 @@ interface ZoneDetails {
 
 export const generateZoneNotification = async (req: Request, res: Response) => {
   try {
-   
     const { type, currentRisk, status, userContext, activity } = req.body as ZoneDetails;
 
-    
     if (!type || currentRisk === undefined || !status) {
       return res.status(400).json({ error: 'Missing required parameters' });
     }
 
-    const prompt = `Generate a short, friendly notification (max 15 words) for a user ${
-      status === 'entering' ? 'entering' : 'exiting'
-    } a ${type} zone with risk level ${currentRisk}. User context: ${
-      userContext?.name ? `Name: ${userContext.name}` : 'none'
-    } Preferences: ${userContext?.preferences?.join(', ') || 'none'}
-    Activity: ${activity || 'pedestrian'}. Include relevant safety advice.`;
+    const prompt = `Create a concise safety notification  (strictly 15 words max) for a user ${status}:
+    - Zone type: ${type} (Risk: ${currentRisk})
+    - User: ${userContext?.name || "Anonymous"}
+    - Preferences: ${userContext?.preferences?.join(", ") || "None"}
+    - Activity: ${activity || "pedestrian"}
+    
+    Format: [User-focused alert] + [Specific safety action]. Use casual tone with optional emoji.`;
+    
 
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4',
-      messages: [{ role: 'user', content: prompt }],
-      max_tokens: 30,
-      temperature: 0.7,
-    });
+    const response: any = await axios.post(
+      'https://api.deepseek.com/v1/chat/completions',
+      {
+        model: 'deepseek-chat',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 30,
+        temperature: 0.7,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY}`,
+        },
+      }
+    );
 
-    res.status(200).json({ 
-      notification: response.choices[0]?.message?.content?.trim() || 'Notification not generated' 
-    });
+    const notification = response.data.choices[0]?.message?.content?.trim() || 'Notification not generated';
+    res.status(200).json({ notification });
   } catch (error) {
-    console.error('AI notification failed:', error);
-    res.status(500).json({ error: 'Failed to generate notification' });
+    console.error('DeepSeek API error:', error);
+    res.status(500).json({ 
+      error: 'Failed to generate notification',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 };

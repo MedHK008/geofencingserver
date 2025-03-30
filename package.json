@@ -11,13 +11,13 @@
   ],
   "scripts": {
     "build": "npm run build --workspaces",
-    "start": "concurrently \"npm run start:building\" \"npm run start:route\" \"npm run start:traffic_light\" \"npm run start:zone\" \"npm run start:riscCalc\" \"npm run start:Astar\"",
+    "start": "concurrently \"npm run start:building\" \"npm run start:route\" \"npm run start:traffic_light\" \"npm run start:zone\" \"npm run start:riscCalc\" \"npm run start:notifications\"",
     "start:building": "nodemon --exec ts-node ./building/index.ts",
     "start:route": "nodemon --exec ts-node ./route/index.ts",
     "start:traffic_light": "nodemon --exec ts-node ./traffic_light/index.ts",
     "start:zone": "nodemon --exec ts-node ./zone/index.ts",
     "start:riscCalc": "nodemon --exec ts-node ./riscCalc/index.ts",
-    "start:Astar": "nodemon ./Astar/src/app.js"
+    "start:notifications": "nodemon --exec ts-node ./notifications/index.ts"
   },
   "devDependencies": {
     "@types/axios": "^0.9.36",
