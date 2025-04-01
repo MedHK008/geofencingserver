@@ -3,7 +3,6 @@ import env from 'dotenv';
 import cors from 'cors';
 import weatherRouter from './Router/weatherRouter';
 
-
 env.config();
 const PORT_WEATHER = process.env.PORT_WEATHER || 8090;
 const app = express();
