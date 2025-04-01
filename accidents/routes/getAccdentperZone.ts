@@ -3,7 +3,6 @@ import { getZonesWithAccidents } from '../controllers/calculateAccidents';
 
 const router = Router();
 
-
-router.get('/:city', getZonesWithAccidents )
+router.get('/:city', getZonesWithAccidents);
 
 export default router;

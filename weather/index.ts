@@ -5,7 +5,7 @@ import weatherRouter from './Router/weatherRouter';
 
 
 env.config();
-const PORT_WEATHER = process.env.PORT_WEATHER;
+const PORT_WEATHER = process.env.PORT_WEATHER || 8090;
 const app = express();
 app.use(cors({ origin: '*' }));
 app.use(express.json());

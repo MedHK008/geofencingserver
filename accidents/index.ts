@@ -11,14 +11,17 @@ app.use(cors({ origin: '*' }));
 app.use(express.json());
 
 connectToAccidentDB();
-   
+
+const PORT = process.env.PORT || 8010;
+console.log(`Starting server on port: ${PORT}`); // Log the PORT value
+
 app.use("/api/accidents_per_zone", getAccidentPerZoneRoutes);
 
 app.use((req, res) => {
     res.status(404).json({ message: "Endpoint not found" });
 });
 
-const PORT = process.env.PORT ;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
+
