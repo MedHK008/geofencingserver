@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { Config, Zone } from "../modules/riscModule";
 import { ProcessedZone, Node, BuildingInterface, ConfigInterface, ProcessedBuilding, RouteInterface, ProcessedRoute, ZoneInterface, RiscLevel } from "../interfaces/interfaces";
 import { checkTimeForBuilding } from './TimeController';
-import { getWeather } from "./weatherRoute";
 import { convertZoneSchemaToInterface } from "./SchemasToIntefaces";
 
 
