@@ -1,0 +1,993 @@
+[{
+  "_id": {
+    "$oid": "67e96f0a77b14051fb1ac932"
+  },
+  "rule_number": 1,
+  "conditions": {
+    "operator": "AND",
+    "items": [
+      {
+        "variable": "Vent",
+        "value": "Élevé"
+      },
+      {
+        "operator": "OR",
+        "items": [
+          {
+            "variable": "Rain",
+            "value": "Élevé"
+          },
+          {
+            "variable": "Snow",
+            "value": "Élevé"
+          }
+        ]
+      },
+      {
+        "variable": "Accidents",
+        "value": "Élevé"
+      }
+    ]
+  },
+  "conclusion": {
+    "Risque": "Élevé"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e96f0a77b14051fb1ac933"
+  },
+  "rule_number": 2,
+  "conditions": {
+    "operator": "AND",
+    "items": [
+      {
+        "variable": "Vent",
+        "value": "Élevé"
+      },
+      {
+        "operator": "OR",
+        "items": [
+          {
+            "variable": "Rain",
+            "value": "Élevé"
+          },
+          {
+            "variable": "Snow",
+            "value": "Élevé"
+          }
+        ]
+      },
+      {
+        "operator": "OR",
+        "items": [
+          {
+            "variable": "liveDensity",
+            "value": "Élevé"
+          },
+          {
+            "variable": "population",
+            "value": "Élevé"
+          }
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "Risque": "Élevé"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e96f0a77b14051fb1ac934"
+  },
+  "rule_number": 3,
+  "conditions": {
+    "operator": "AND",
+    "items": [
+      {
+        "variable": "Accidents",
+        "value": "Élevé"
+      },
+      {
+        "operator": "OR",
+        "items": [
+          {
+            "variable": "sensibilityP",
+            "value": "Élevé"
+          },
+          {
+            "variable": "sensibilityC",
+            "value": "Élevé"
+          }
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "Risque": "Élevé"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e96f0a77b14051fb1ac935"
+  },
+  "rule_number": 4,
+  "conditions": {
+    "operator": "AND",
+    "items": [
+      {
+        "variable": "Vent",
+        "value": "Moyen"
+      },
+      {
+        "variable": "Rain",
+        "value": "Moyen"
+      },
+      {
+        "variable": "Accidents",
+        "value": "Moyen"
+      },
+      {
+        "variable": "liveDensity",
+        "value": "Élevé"
+      }
+    ]
+  },
+  "conclusion": {
+    "Risque": "Moyen"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e96f0a77b14051fb1ac936"
+  },
+  "rule_number": 5,
+  "conditions": {
+    "operator": "AND",
+    "items": [
+      {
+        "variable": "Vent",
+        "value": "Faible"
+      },
+      {
+        "variable": "Rain",
+        "value": "Faible"
+      },
+      {
+        "variable": "Snow",
+        "value": "Faible"
+      },
+      {
+        "variable": "Accidents",
+        "value": "Faible"
+      },
+      {
+        "operator": "OR",
+        "items": [
+          {
+            "variable": "sensibilityP",
+            "value": "Faible"
+          },
+          {
+            "variable": "sensibilityC",
+            "value": "Faible"
+          }
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "Risque": "Faible"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e96f0a77b14051fb1ac937"
+  },
+  "rule_number": 6,
+  "conditions": {
+    "operator": "AND",
+    "items": [
+      {
+        "variable": "liveDensity",
+        "value": "Élevé"
+      },
+      {
+        "variable": "population",
+        "value": "Élevé"
+      },
+      {
+        "operator": "OR",
+        "items": [
+          {
+            "variable": "sensibilityP",
+            "value": "Élevé"
+          },
+          {
+            "variable": "sensibilityC",
+            "value": "Élevé"
+          }
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "Risque": "Élevé"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e96f0a77b14051fb1ac938"
+  },
+  "rule_number": 7,
+  "conditions": {
+    "operator": "AND",
+    "items": [
+      {
+        "operator": "OR",
+        "items": [
+          {
+            "variable": "Vent",
+            "value": "Élevé"
+          },
+          {
+            "variable": "Rain",
+            "value": "Élevé"
+          }
+        ]
+      },
+      {
+        "variable": "Accidents",
+        "value": "Moyen"
+      }
+    ]
+  },
+  "conclusion": {
+    "Risque": "Moyen"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e96f0a77b14051fb1ac939"
+  },
+  "rule_number": 8,
+  "conditions": {
+    "operator": "AND",
+    "items": [
+      {
+        "variable": "Vent",
+        "value": "Faible"
+      },
+      {
+        "variable": "Rain",
+        "value": "Faible"
+      },
+      {
+        "variable": "liveDensity",
+        "value": "Faible"
+      },
+      {
+        "variable": "population",
+        "value": "Faible"
+      }
+    ]
+  },
+  "conclusion": {
+    "Risque": "Faible"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e96f0a77b14051fb1ac93a"
+  },
+  "rule_number": 9,
+  "conditions": {
+    "operator": "AND",
+    "items": [
+      {
+        "variable": "Accidents",
+        "value": "Moyen"
+      },
+      {
+        "operator": "OR",
+        "items": [
+          {
+            "variable": "sensibilityP",
+            "value": "Moyen"
+          },
+          {
+            "variable": "sensibilityC",
+            "value": "Moyen"
+          }
+        ]
+      },
+      {
+        "operator": "OR",
+        "items": [
+          {
+            "variable": "Vent",
+            "value": "Moyen"
+          },
+          {
+            "variable": "Rain",
+            "value": "Moyen"
+          }
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "Risque": "Moyen"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e96f0a77b14051fb1ac93b"
+  },
+  "rule_number": 10,
+  "conditions": {
+    "operator": "AND",
+    "items": [
+      {
+        "variable": "Vent",
+        "value": "Faible"
+      },
+      {
+        "variable": "Rain",
+        "value": "Faible"
+      },
+      {
+        "variable": "Snow",
+        "value": null
+      },
+      {
+        "variable": "Accidents",
+        "value": "Faible"
+      },
+      {
+        "variable": "liveDensity",
+        "value": "Faible"
+      },
+      {
+        "variable": "population",
+        "value": "Faible"
+      },
+      {
+        "variable": "Traffic",
+        "value": "Faible"
+      }
+    ]
+  },
+  "conclusion": {
+    "Risque": "Faible"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e96f0a77b14051fb1ac93c"
+  },
+  "rule_number": 11,
+  "conditions": {
+    "operator": "AND",
+    "items": [
+      {
+        "variable": "Vent",
+        "value": "Élevé"
+      },
+      {
+        "variable": "Rain",
+        "value": "Moyen"
+      },
+      {
+        "operator": "OR",
+        "items": [
+          {
+            "variable": "sensibilityP",
+            "value": "Élevé"
+          },
+          {
+            "variable": "sensibilityC",
+            "value": "Élevé"
+          }
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "Risque": "Élevé"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e96f0a77b14051fb1ac93d"
+  },
+  "rule_number": 12,
+  "conditions": {
+    "operator": "AND",
+    "items": [
+      {
+        "variable": "Accidents",
+        "value": "Moyen"
+      },
+      {
+        "variable": "liveDensity",
+        "value": "Élevé"
+      },
+      {
+        "variable": "population",
+        "value": "Élevé"
+      }
+    ]
+  },
+  "conclusion": {
+    "Risque": "Élevé"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e96f0a77b14051fb1ac93e"
+  },
+  "rule_number": 13,
+  "conditions": {
+    "operator": "AND",
+    "items": [
+      {
+        "variable": "Vent",
+        "value": "Moyen"
+      },
+      {
+        "variable": "Rain",
+        "value": "Moyen"
+      },
+      {
+        "operator": "OR",
+        "items": [
+          {
+            "variable": "sensibilityP",
+            "value": "Moyen"
+          },
+          {
+            "variable": "sensibilityC",
+            "value": "Moyen"
+          }
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "Risque": "Moyen"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e96f0a77b14051fb1ac93f"
+  },
+  "rule_number": 14,
+  "conditions": {
+    "operator": "AND",
+    "items": [
+      {
+        "variable": "Accidents",
+        "value": "Faible"
+      },
+      {
+        "variable": "liveDensity",
+        "value": "Élevé"
+      },
+      {
+        "operator": "OR",
+        "items": [
+          {
+            "variable": "sensibilityP",
+            "value": "Élevé"
+          },
+          {
+            "variable": "sensibilityC",
+            "value": "Élevé"
+          }
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "Risque": "Moyen"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e96f0a77b14051fb1ac940"
+  },
+  "rule_number": 15,
+  "conditions": {
+    "operator": "AND",
+    "items": [
+      {
+        "variable": "Vent",
+        "value": "Élevé"
+      },
+      {
+        "variable": "Rain",
+        "value": "Faible"
+      },
+      {
+        "variable": "Accidents",
+        "value": "Faible"
+      }
+    ]
+  },
+  "conclusion": {
+    "Risque": "Moyen"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e96f0a77b14051fb1ac941"
+  },
+  "rule_number": 16,
+  "conditions": {
+    "operator": "AND",
+    "items": [
+      {
+        "variable": "population",
+        "value": "Élevé"
+      },
+      {
+        "variable": "liveDensity",
+        "value": "Moyen"
+      },
+      {
+        "operator": "OR",
+        "items": [
+          {
+            "variable": "sensibilityP",
+            "value": "Moyen"
+          },
+          {
+            "variable": "sensibilityC",
+            "value": "Moyen"
+          }
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "Risque": "Moyen"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e96f0a77b14051fb1ac942"
+  },
+  "rule_number": 17,
+  "conditions": {
+    "operator": "AND",
+    "items": [
+      {
+        "variable": "Vent",
+        "value": "Moyen"
+      },
+      {
+        "variable": "Rain",
+        "value": "Élevé"
+      },
+      {
+        "variable": "Accidents",
+        "value": "Faible"
+      }
+    ]
+  },
+  "conclusion": {
+    "Risque": "Moyen"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e96f0a77b14051fb1ac943"
+  },
+  "rule_number": 18,
+  "conditions": {
+    "operator": "AND",
+    "items": [
+      {
+        "variable": "Accidents",
+        "value": "Élevé"
+      },
+      {
+        "variable": "liveDensity",
+        "value": "Faible"
+      },
+      {
+        "variable": "population",
+        "value": "Faible"
+      }
+    ]
+  },
+  "conclusion": {
+    "Risque": "Moyen"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e96f0a77b14051fb1ac944"
+  },
+  "rule_number": 19,
+  "conditions": {
+    "operator": "AND",
+    "items": [
+      {
+        "operator": "OR",
+        "items": [
+          {
+            "variable": "sensibilityP",
+            "value": "Élevé"
+          },
+          {
+            "variable": "sensibilityC",
+            "value": "Élevé"
+          }
+        ]
+      },
+      {
+        "operator": "OR",
+        "items": [
+          {
+            "variable": "Vent",
+            "value": "Moyen"
+          },
+          {
+            "variable": "Rain",
+            "value": "Moyen"
+          }
+        ]
+      },
+      {
+        "variable": "Accidents",
+        "value": "Faible"
+      }
+    ]
+  },
+  "conclusion": {
+    "Risque": "Moyen"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e96f0a77b14051fb1ac945"
+  },
+  "rule_number": 20,
+  "conditions": {
+    "operator": "AND",
+    "items": [
+      {
+        "variable": "Vent",
+        "value": "Faible"
+      },
+      {
+        "variable": "Rain",
+        "value": "Faible"
+      },
+      {
+        "operator": "OR",
+        "items": [
+          {
+            "variable": "sensibilityP",
+            "value": "Moyen"
+          },
+          {
+            "variable": "sensibilityC",
+            "value": "Moyen"
+          }
+        ]
+      },
+      {
+        "variable": "liveDensity",
+        "value": "Moyen"
+      }
+    ]
+  },
+  "conclusion": {
+    "Risque": "Faible"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e96f0a77b14051fb1ac946"
+  },
+  "rule_number": 21,
+  "conditions": {
+    "operator": "AND",
+    "items": [
+      {
+        "variable": "Snow",
+        "value": "Élevé"
+      },
+      {
+        "variable": "Traffic",
+        "value": "Élevé"
+      }
+    ]
+  },
+  "conclusion": {
+    "Risque": "Élevé"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e96f0a77b14051fb1ac947"
+  },
+  "rule_number": 22,
+  "conditions": {
+    "operator": "AND",
+    "items": [
+      {
+        "variable": "Snow",
+        "value": "Moyen"
+      },
+      {
+        "variable": "Vent",
+        "value": "Élevé"
+      },
+      {
+        "variable": "Accidents",
+        "value": "Moyen"
+      }
+    ]
+  },
+  "conclusion": {
+    "Risque": "Élevé"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e96f0a77b14051fb1ac948"
+  },
+  "rule_number": 23,
+  "conditions": {
+    "operator": "AND",
+    "items": [
+      {
+        "variable": "Snow",
+        "value": "Faible"
+      },
+      {
+        "variable": "Vent",
+        "value": "Faible"
+      },
+      {
+        "variable": "Traffic",
+        "value": "Moyen"
+      }
+    ]
+  },
+  "conclusion": {
+    "Risque": "Moyen"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e96f0a77b14051fb1ac949"
+  },
+  "rule_number": 24,
+  "conditions": {
+    "operator": "AND",
+    "items": [
+      {
+        "variable": "liveDensity",
+        "value": "Élevé"
+      },
+      {
+        "variable": "Accidents",
+        "value": "Élevé"
+      }
+    ]
+  },
+  "conclusion": {
+    "Risque": "Élevé"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e96f0a77b14051fb1ac94a"
+  },
+  "rule_number": 25,
+  "conditions": {
+    "operator": "AND",
+    "items": [
+      {
+        "variable": "Traffic",
+        "value": "Élevé"
+      },
+      {
+        "variable": "Rain",
+        "value": "Élevé"
+      }
+    ]
+  },
+  "conclusion": {
+    "Risque": "Élevé"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e96f0a77b14051fb1ac94b"
+  },
+  "rule_number": 26,
+  "conditions": {
+    "operator": "AND",
+    "items": [
+      {
+        "variable": "population",
+        "value": "Élevé"
+      },
+      {
+        "operator": "OR",
+        "items": [
+          {
+            "variable": "sensibilityP",
+            "value": "Élevé"
+          },
+          {
+            "variable": "sensibilityC",
+            "value": "Élevé"
+          }
+        ]
+      },
+      {
+        "variable": "Accidents",
+        "value": "Moyen"
+      }
+    ]
+  },
+  "conclusion": {
+    "Risque": "Élevé"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e96f0a77b14051fb1ac94c"
+  },
+  "rule_number": 27,
+  "conditions": {
+    "operator": "AND",
+    "items": [
+      {
+        "variable": "Traffic",
+        "value": "Élevé"
+      },
+      {
+        "variable": "liveDensity",
+        "value": "Élevé"
+      },
+      {
+        "variable": "Vent",
+        "value": "Moyen"
+      }
+    ]
+  },
+  "conclusion": {
+    "Risque": "Moyen"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e96f0a77b14051fb1ac94d"
+  },
+  "rule_number": 28,
+  "conditions": {
+    "operator": "AND",
+    "items": [
+      {
+        "variable": "sensibilityC",
+        "value": "Élevé"
+      },
+      {
+        "variable": "Accidents",
+        "value": "Moyen"
+      },
+      {
+        "variable": "Rain",
+        "value": "Moyen"
+      }
+    ]
+  },
+  "conclusion": {
+    "Risque": "Élevé"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e96f0a77b14051fb1ac94e"
+  },
+  "rule_number": 29,
+  "conditions": {
+    "operator": "AND",
+    "items": [
+      {
+        "operator": "OR",
+        "items": [
+          {
+            "variable": "sensibilityP",
+            "value": "Moyen"
+          },
+          {
+            "variable": "sensibilityC",
+            "value": "Moyen"
+          }
+        ]
+      },
+      {
+        "variable": "Vent",
+        "value": "Faible"
+      },
+      {
+        "variable": "Rain",
+        "value": "Faible"
+      }
+    ]
+  },
+  "conclusion": {
+    "Risque": "Moyen"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e96f0a77b14051fb1ac94f"
+  },
+  "rule_number": 30,
+  "conditions": {
+    "operator": "AND",
+    "items": [
+      {
+        "variable": "Accidents",
+        "value": "Élevé"
+      },
+      {
+        "operator": "OR",
+        "items": [
+          {
+            "variable": "Rain",
+            "value": "Élevé"
+          },
+          {
+            "variable": "Snow",
+            "value": "Élevé"
+          }
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "Risque": "Élevé"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e96f9114774b0f6975d135"
+  },
+  "rule_number": 31,
+  "conditions": {
+    "operator": "AND",
+    "items": [
+      {
+        "variable": "Vent",
+        "value": "Faible"
+      },
+      {
+        "variable": "Rain",
+        "value": "Faible"
+      },
+      {
+        "variable": "liveDensity",
+        "value": "Élevé"
+      },
+      {
+        "variable": "population",
+        "value": "Élevé"
+      }
+    ]
+  },
+  "conclusion": {
+    "Risque": "Faible"
+  }
+}]
