@@ -42,8 +42,8 @@ export interface ProcessedZone {
     routes: ProcessedRoute[];
     trafficLights: number;
     buildings: ProcessedBuilding[];
-    riscC: RiscLevel,
-    riscP: RiscLevel,
+    riscC: number,
+    riscP: number,
     pedestrian: {
         none: number;
         faible: number;

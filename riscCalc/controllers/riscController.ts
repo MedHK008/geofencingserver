@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { Config, Zone } from "../modules/riscModule";
 import { ProcessedZone, Node, BuildingInterface, ConfigInterface, ProcessedBuilding, RouteInterface, ProcessedRoute, ZoneInterface, RiscLevel } from "../interfaces/interfaces";
 import { checkTimeForBuilding } from './TimeController';
-import { getWeather } from "./weatherRoute";
 import { convertZoneSchemaToInterface } from "./SchemasToIntefaces";
 
 
@@ -47,12 +46,25 @@ const joinZoneAndRisc = async (config: ConfigInterface, zones: ZoneInterface[]):
     try {
         return zones.map(zone => {
             const ourConfig = config.zones.find(z => z.type === zone.type);
+            let car = { none: 0, faible: 0, moyenne: 0, eleve: 0 }
+            let pedestrian = { none: 0, faible: 0, moyenne: 0, eleve: 0 }
+
+            if (ourConfig?.riscC === RiscLevel.NONE) car.none++;
+            else if (ourConfig?.riscC === RiscLevel.FAIBLE) car.faible++;
+            else if (ourConfig?.riscC === RiscLevel.MOYENNE) car.moyenne++;
+            else if (ourConfig?.riscC === RiscLevel.ELEVE) car.eleve++;
+
+            if (ourConfig?.riscP === RiscLevel.NONE) pedestrian.none++;
+            else if (ourConfig?.riscP === RiscLevel.FAIBLE) pedestrian.faible++;
+            else if (ourConfig?.riscP === RiscLevel.MOYENNE) pedestrian.moyenne++;
+            else if (ourConfig?.riscP === RiscLevel.ELEVE) pedestrian.eleve++;
+
             return {
                 ...zone,
-                riscP: ourConfig?.riscP || RiscLevel.NONE,
-                riscC: ourConfig?.riscC || RiscLevel.NONE,
-                car: { none: 0, faible: 0, moyenne: 0, eleve: 0 },
-                pedestrian: { none: 0, faible: 0, moyenne: 0, eleve: 0 },
+                riscP: 0,
+                riscC: 0,
+                car: car,
+                pedestrian: pedestrian,
 
             };
         });
@@ -109,7 +121,7 @@ const getZonesWithRisc = async (req: Request, res: Response) => {
 
         let zones: ZoneInterface[] = req.body.zones
         const config: ConfigInterface[] = await Config.find().lean();
-        const newZones  = await Promise.all(
+        const newZones = await Promise.all(
             zones.map(async (zone) => {
                 return await Zone.findOne({ zoneId: zone.zoneId })
                     .populate('buildings')
@@ -117,14 +129,13 @@ const getZonesWithRisc = async (req: Request, res: Response) => {
                     .lean();
             })
         );
-        let anotherZ :ZoneInterface[] = newZones.map(z=>{
+        let anotherZ: ZoneInterface[] = newZones.map(z => {
             return convertZoneSchemaToInterface(z)
         })
-        
+
         let anotherzones: ProcessedZone[] = await joinZoneAndRisc(config[0], anotherZ)
         anotherzones = await Promise.all(anotherzones.map(async (zone) => {
-            zone.car = { none: 0, faible: 0, moyenne: 0, eleve: 0 };
-            zone.pedestrian = { none: 0, faible: 0, moyenne: 0, eleve: 0 };
+
 
             zone.buildings = await joinBuildingAndRisc(config[0], zone.buildings)
             zone.routes = await joinRouteAndRisc(config[0], zone.routes)
@@ -160,52 +171,26 @@ const getZonesWithRisc = async (req: Request, res: Response) => {
             });
 
 
-            const state = await getWeather();
-            if (state === RiscLevel.NONE) zone.car.none++;
-            if (state === RiscLevel.FAIBLE) zone.car.faible++;
-            if (state === RiscLevel.MOYENNE) zone.car.moyenne++;
-            if (state === RiscLevel.ELEVE) zone.car.eleve++;
+
+            // const state = await getWeather();
+            // if (state === RiscLevel.NONE) zone.car.none++;
+            // if (state === RiscLevel.FAIBLE) zone.car.faible++;
+            // if (state === RiscLevel.MOYENNE) zone.car.moyenne++;
+            // if (state === RiscLevel.ELEVE) zone.car.eleve++;
 
 
-            const riscC = zone.car.faible * 0.15 + zone.car.moyenne * 0.35 + zone.car.eleve * 0.5
-            const riscP = zone.pedestrian.faible * 0.15 + zone.pedestrian.moyenne * 0.35 + zone.pedestrian.eleve * 0.5
-
-            if (riscC > 0 && riscC <= 0.15) zone.riscC = RiscLevel.NONE
-            else if (riscC > 0.15 && riscC <= 0.35) zone.riscC = RiscLevel.FAIBLE
-            else if (riscC > 0.35 && riscC <= 0.75) zone.riscC = RiscLevel.MOYENNE
-            else if (riscC > 0.75 && riscC <= 1) zone.riscC = RiscLevel.ELEVE
-
-            if (riscP > 0 && riscP <= 0.15) zone.riscP = RiscLevel.NONE
-            else if (riscP > 0.15 && riscP <= 0.35) zone.riscP = RiscLevel.FAIBLE
-            else if (riscP > 0.35 && riscP <= 0.75) zone.riscP = RiscLevel.MOYENNE
-            else if (riscP > 0.75 && riscP <= 1) zone.riscP = RiscLevel.ELEVE
-
-
-            console.log(`
-                📍 Zone ID: ${zone.zoneId}
-                ----------------------------------------
-                🚧 Risque Collision (riscC): ${riscC.toFixed(2)}
-                   ➡️ Niveau: ${zone.riscC} ${zone.riscC === RiscLevel.NONE ? "✅ (Aucun)" :
-                    zone.riscC === RiscLevel.FAIBLE ? "🟢 (Faible)" :
-                        zone.riscC === RiscLevel.MOYENNE ? "🟠 (Moyen)" :
-                            zone.riscC === RiscLevel.ELEVE ? "🔴 (Élevé)" : ""}
-                
-                🚶‍♂️ Risque Piétons (riscP): ${riscP.toFixed(2)}
-                   ➡️ Niveau: ${zone.riscP} ${zone.riscP === RiscLevel.NONE ? "✅ (Aucun)" :
-                    zone.riscP === RiscLevel.FAIBLE ? "🟢 (Faible)" :
-                        zone.riscP === RiscLevel.MOYENNE ? "🟠 (Moyen)" :
-                            zone.riscP === RiscLevel.ELEVE ? "🔴 (Élevé)" : ""}
-                ----------------------------------------
-                `);
+            zone.riscC = parseFloat((
+                (zone.car.faible * 0.15 + zone.car.moyenne * 0.35 + zone.car.eleve * 0.5) /
+                (zone.car.faible + zone.car.moyenne + zone.car.eleve)
+            ).toFixed(2));
+            
+            zone.riscP = parseFloat((
+                (zone.pedestrian.faible * 0.15 + zone.pedestrian.moyenne * 0.35 + zone.pedestrian.eleve * 0.5) /
+                (zone.pedestrian.faible + zone.pedestrian.moyenne + zone.pedestrian.eleve)
+            ).toFixed(2));
             return zone;
         }));
-
-
-
-        // console.log(anotherzones)
         const end = Date.now() - start;
-        // console.log(`Execution time: ${end}ms`);
-
         res.status(200).json({ success: true, anotherzones, end });
     } catch (error) {
         console.error("Error processing zones:", error);
