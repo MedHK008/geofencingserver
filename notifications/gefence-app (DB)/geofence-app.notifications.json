@@ -1,0 +1,182 @@
+[{
+  "_id": {
+    "$oid": "67ebc8c128da7d45f5f4557f"
+  },
+  "title": "RESIDENTIAL ZONE ALERT",
+  "message": "Be cautious, Salaheddine! You're entering a residential zone with a Elevee risk.",
+  "date": {
+    "$date": "2025-04-01T11:06:41.754Z"
+  },
+  "seen": false,
+  "user_id": "1",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67ebc8e828da7d45f5f45581"
+  },
+  "title": "RESIDENTIAL ZONE ALERT",
+  "message": "Salaheddine, stay alert in this risky area 🚗—lock doors & avoid stops!",
+  "date": {
+    "$date": "2025-04-01T11:07:20.558Z"
+  },
+  "seen": false,
+  "user_id": "1",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67ebc90528da7d45f5f45583"
+  },
+  "title": "RESIDENTIAL ZONE ALERT",
+  "message": "Salaheddine, high-risk residential zone! 🚨 Stay alert while driving your car.",
+  "date": {
+    "$date": "2025-04-01T11:07:49.865Z"
+  },
+  "seen": false,
+  "user_id": "1",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67ebc91628da7d45f5f45585"
+  },
+  "title": "RESIDENTIAL ZONE ALERT",
+  "message": "Salaheddine, high-risk area! 🚨 Stay alert while driving in this neighborhood.",
+  "date": {
+    "$date": "2025-04-01T11:08:06.332Z"
+  },
+  "seen": false,
+  "user_id": "1",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67ebc9cdfed0547c7bdd7b4e"
+  },
+  "title": "RESIDENTIAL ZONE ALERT",
+  "message": "Salaheddine, high-risk residential area! 🚨 Stay alert in your car, lock doors, and avoid stopping. Keep safe!",
+  "date": {
+    "$date": "2025-04-01T11:11:09.606Z"
+  },
+  "seen": false,
+  "user_id": "1",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67ebcb6cc54835363d7b15f7"
+  },
+  "title": "RESIDENTIAL ZONE ALERT",
+  "message": "Salaheddine, residential area is high-risk! 🚨 Stay alert, lock doors, and avoid stopping. Keep moving safely in your",
+  "date": {
+    "$date": "2025-04-01T11:18:04.405Z"
+  },
+  "seen": false,
+  "user_id": "1",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67ebcbf9c54835363d7b15fa"
+  },
+  "title": "RESIDENTIAL ZONE ALERT",
+  "message": "Salaheddine, high-risk residential zone! 🚨 Stay alert, avoid parking in secluded spots, and lock your car. Safety first",
+  "date": {
+    "$date": "2025-04-01T11:20:25.207Z"
+  },
+  "seen": false,
+  "user_id": "1",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67ebcc14c54835363d7b15fd"
+  },
+  "title": "RESIDENTIAL ZONE ALERT",
+  "message": "Salaheddine, stay alert in this risky residential area! 🚶 Stick to well-lit paths and avoid distractions. #StaySafe",
+  "date": {
+    "$date": "2025-04-01T11:20:52.261Z"
+  },
+  "seen": false,
+  "user_id": "1",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67ebccc6c54835363d7b15ff"
+  },
+  "title": "INDUSTRIAL ZONE ALERT",
+  "message": "Be cautious, Salaheddine! You're leaving a industrial zone with a Elevee risk.",
+  "date": {
+    "$date": "2025-04-01T11:23:50.872Z"
+  },
+  "seen": false,
+  "user_id": "1",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67ebccd7c54835363d7b1601"
+  },
+  "title": "INDUSTRIAL ZONE ALERT",
+  "message": "⚠️ Salaheddine, you're leaving a high-risk industrial zone! Stay alert, avoid machinery, and stick to marked paths.",
+  "date": {
+    "$date": "2025-04-01T11:24:07.801Z"
+  },
+  "seen": false,
+  "user_id": "1",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67ebdc2b7f18a6b7043786e6"
+  },
+  "title": "RESIDENTIAL ZONE ALERT",
+  "message": "⚠️ Salaheddine, high-risk area! Stay alert, avoid dark alleys, and walk in well-lit areas. 🚶‍",
+  "date": {
+    "$date": "2025-04-01T12:29:31.343Z"
+  },
+  "seen": false,
+  "user_id": "1",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67ebdcb37f18a6b7043786e8"
+  },
+  "title": "RESIDENTIAL ZONE ALERT",
+  "message": "⚠️ Salaheddine, high-risk area! Stay alert, avoid shortcuts, and walk in well-lit areas. 🚶‍♂️",
+  "date": {
+    "$date": "2025-04-01T12:31:47.682Z"
+  },
+  "seen": false,
+  "user_id": "1",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67ebdf347f18a6b7043786ec"
+  },
+  "title": "RESIDENTIAL ZONE ALERT",
+  "message": "Salaheddine, high-risk area! 🚸 Stay alert, avoid dark alleys, and walk in well-lit spots. Keep phone",
+  "date": {
+    "$date": "2025-04-01T12:42:28.884Z"
+  },
+  "seen": false,
+  "user_id": "1",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67ebdf407f18a6b7043786ee"
+  },
+  "title": "RESIDENTIAL ZONE ALERT",
+  "message": "Be cautious, Salaheddine! You're entering a residential zone with a Elevee risk.",
+  "date": {
+    "$date": "2025-04-01T12:42:40.607Z"
+  },
+  "seen": false,
+  "user_id": "1",
+  "__v": 0
+}]

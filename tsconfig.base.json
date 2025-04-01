@@ -1,10 +1,12 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "module": "commonjs",
-    "rootDir": "./",
-    "outDir": "./build",
-    "esModuleInterop": true,
-    "strict": true
+    "target": "ESNext", // Use ESNext for modern JavaScript features
+    "module": "ESNext", // Use ES modules
+    "rootDir": "./", // Keep the root directory as is
+    "outDir": "./build", // Output directory for compiled files
+    "moduleResolution": "node", // Resolve modules in Node.js style
+    "esModuleInterop": true, // Enable interoperability between CommonJS and ES modules
+    "strict": true, // Enable strict type-checking
+    "skipLibCheck": true // Skip type checking for declaration files
   }
 }
